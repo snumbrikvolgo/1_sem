@@ -61,15 +61,15 @@ int main()
     printf("Enter a, b, c\n");
     int save = scanf("%lf %lf  %lf", &a, &b, &c);
 
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c))
+      {
+       printf("Check your input");
+       return 0;
+      }
+
     if (save < 3 )
      {
       printf("Enter the numbers, criminal scum");
-      return 0;
-     }
-
-    if (isfinite(a) || (isfinite(b)) || (isfinite(c)))
-     {
-      printf("Check your input");
       return 0;
      }
 
