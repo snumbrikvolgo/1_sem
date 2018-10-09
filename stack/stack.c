@@ -1,5 +1,7 @@
 #include <stdio.h>
-#define CAPACITY 512
+void  stackCtor(struct *s);
+void stackDtor(struct *s);
+
 
 int main()
 {
@@ -7,15 +9,17 @@ int main()
         {
             double* data;
             int size;
-            int CAPACITY;
+            int capacity;
         };
+    struct stack *ps;
+    s = {0, 0, 512};
     stackCtor(&s, CAPACITY);
-    assert(StackOK(&s));
-    assert(StackPush(&s, 42));
+    assert(stackOK(&s));
+    assert(stackPush(&s, 42));
 
 }
 
-void  stackCtor(stack *s)
+void  stackCtor(struct *s)
 {
     assert(s);
     s -> *data = (double*)calloc(size, sizeof(*data));
@@ -24,6 +28,20 @@ void  stackCtor(stack *s)
     return s;
 }
 
-void stackDtor(stack *s)
+void stackDtor(struct *s)
+{
+    assert(s);
+    free (s->data);
+    s->data = 0;
+    s->capacity = -1;
+    s->size = -1;
+}
+
+bool stackOK(const struct *s) 
+{
+    return s && s->data && s->size;
+}
+
+int stackPush(struct *s,int a)
 {
     
