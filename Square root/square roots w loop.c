@@ -70,15 +70,18 @@ int main()
 
     if (save < 3 )
      {
-      printf("Enter the numbers, criminal scum");
+      printf("Enter the numbers, criminal scum\n");
+      scanf("%*s");
      }
     continue;
 
+
     if (!isfinite(a) || !isfinite(b) || !isfinite(c))
       {
-       printf("Check your input");
+       printf("Check your input\n");
+       save = 0;
       }
-      continue;
+    continue;
     }
 
     printf("%.3f*x2+%.3f*x+%.3f=0\n", a,b,c); ///<The full equation
