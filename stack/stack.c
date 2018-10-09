@@ -1,47 +1,74 @@
 #include <stdio.h>
-void  stackCtor(struct *s);
-void stackDtor(struct *s);
+#include <assert.h>
+#include <stdlib.h>
+#define CAPACITY 50
+
+typedef  struct stack /// объ€вл€ем стек
+        {
+            double* data;
+            int size;
+            int max_size;
+        } stack;
+
+void  stackCtor(struct stack* s);
+void  stackDtor(struct stack* s);
+int   stackPush(struct stack* s, double a);
+int stackOK(const struct stack *s);
+
+void stackCtor(struct stack* s)
+{
+    assert(s != NULL);
+    s -> data = (double*)calloc(CAPACITY, sizeof(*(s -> data)));
+    s -> max_size = CAPACITY;
+    s -> size = 0;
+    assert(stackOK(s));
+}
+
+void stackDtor(struct stack *s)
+{
+    assert(stackOK(s));
+    free (s->data);
+    s -> data = 0;
+    s -> max_size = -1;
+    s -> size = -1;
+}
+
+int stackOK(const struct stack *s)
+{
+    return s && s -> data && (s -> max_size == CAPACITY);
+}
+
+int  stackPush(struct stack *s, double a)
+{
+     assert(stackOK(s));
+     if (s -> size < s -> max_size)
+     {
+        s -> data[s -> size ++] = a;
+        assert(stackOK(s));
+        return 1;
+     }
+     else
+     {
+        printf("STACK OVERFLOW");
+        assert(stackOK(s));
+        return 0;
+     }
+}
+
+double stackPop (stack* s)
+{
+    assert(stackOK(s));
+    if s ->
+}
 
 
 int main()
 {
-    struct stack s
-        {
-            double* data;
-            int size;
-            int capacity;
-        };
-    struct stack *ps;
-    s = {0, 0, 512};
-    stackCtor(&s, CAPACITY);
-    assert(stackOK(&s));
-    assert(stackPush(&s, 42));
+    int size = 0;
+    size = scanf("%d", &size);
+
+   // double lovlyu = stackPop(&s);
+
+    printf ("%d", stackPop(&s));
 
 }
-
-void  stackCtor(struct *s)
-{
-    assert(s);
-    s -> *data = (double*)calloc(size, sizeof(*data));
-    int a = scanf("%d", &a);
-    s -> size = a;
-    return s;
-}
-
-void stackDtor(struct *s)
-{
-    assert(s);
-    free (s->data);
-    s->data = 0;
-    s->capacity = -1;
-    s->size = -1;
-}
-
-bool stackOK(const struct *s) 
-{
-    return s && s->data && s->size;
-}
-
-int stackPush(struct *s,int a)
-{
-    
