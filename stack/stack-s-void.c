@@ -4,7 +4,7 @@
 #include <string.h>
 #define CAPACITY 10
 #define POISON 0
-typedef double data_t;
+
 
 typedef  struct stack
         {
@@ -17,9 +17,10 @@ typedef  struct stack
 void stackCtor(stack_t* s, int elem_size);
 void  stackDtor(stack_t* s);
 int  stackPush(stack_t *s, const void* value);
+void stackPop (stack_t* s, void* dest);
 int   stackOK(const stack_t* s);
 void  stackChangeSize(stack_t* s);
-double stackTop(stack_t* s);
+void stackTop(stack_t* s, void* dest);
 int stackSize(stack_t* s);
 
 
@@ -68,28 +69,29 @@ int  stackPush(stack_t *s, const void* value)
      }
 }
 
-void* stackPop (stack_t* s , )
+void stackPop (stack_t* s, void* dest)
 {
+
     assert(stackOK(s));
-    void output = 0;
     if (s -> size == 0)
     {
         printf("Stack is empty\n");
         stackChangeSize(s);
-        return -100000;
+        return;
     }
     if (s -> size > 0)
     {
-        output = s -> data[(s -> size) - 1];
-        s -> data[--(s -> size)] = 0;
+        //output = s -> data[(s -> size) - 1];
+        memcpy(dest, s -> data + (--(s -> size)) * (s -> elem_size), s -> elem_size);
+        //s -> data[--(s -> size)] = 0;
         assert(stackOK(s));
-        return output;
+        return;
     }
     else
     {
         printf("Stack is broken\n");
         assert(stackOK(s));
-    return 0;
+        return;
     }
 }
 
@@ -99,28 +101,28 @@ void stackChangeSize(stack_t* s)
     if ((2 * (s -> size)) <= (s -> max_size))
     {
         (s -> max_size) = (s -> size);
-        s -> data = (double*)realloc (s -> data, (s -> max_size) * sizeof(*(s -> data))+1);
-
+        s -> data = realloc (s -> data, (s -> max_size) * (s -> elem_size) +1);
          assert(stackOK(s));
     }
 
     if ((s -> size)+1 >= s -> max_size)
     {
-        s -> data = (double*)realloc (s -> data, 2 * (s -> max_size) * sizeof(*(s -> data))+1);
+        s -> data = realloc (s -> data, 2 * (s -> max_size) * (s -> elem_size)+1);
         assert(stackOK(s));
     }
 
 }
 
-double stackTop(stack_t *s)
+void stackTop(stack_t *s, void* dest)
 {
     assert(stackOK(s));
     if((s -> size) <= 0)
     {
         printf("Stack is empty");
-        return -100000;
+        return;
     }
-    return s -> data[(s -> size) - 1];
+    memcpy(dest, (s -> data)+ (s -> size - 1) * (s -> elem_size), s -> elem_size);
+    return;
 }
 
 int stackSize(stack_t* s)
@@ -133,21 +135,23 @@ int main()
 {
     struct stack stack;
     int size = 0;
-    stackCtor(&stack);
-    assert(stackPush(&stack, 42));
-    assert(stackPush(&stack, 50));
-    assert(stackPush(&stack, 88));
+    stackCtor(&stack, sizeof(double));
+    double tmp = 42;
+    assert(stackPush(&stack, &tmp));
+    tmp = 5;
+    assert(stackPush(&stack, &tmp));
+    tmp = 6;
+    assert(stackPush(&stack, &tmp));
 
     int lo = stackSize(&stack);
-    printf("%d", lo);
+    printf("%d\n", lo);
+    tmp = 0;
+    stackPop(&stack, &tmp);
+    stackPop(&stack, &tmp);
 
-
-    double lovlyu = stackPop(&stack);
-    lovlyu = stackPop(&stack);
-    lovlyu = stackPop(&stack);
 
     printf("Lovi\n");
-    printf ("%f\n", lovlyu);
+    printf ("%f\n", tmp);
     stackDtor(&stack);
 
     return 0;
