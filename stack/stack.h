@@ -5,7 +5,7 @@
 #define DEBUG
 
 #ifdef DEBUG
-#define assert(check, ptr, canary_type)                                                  \
+#define assert(check, ptr, canary_type)                                     \
     do                                                                      \
     {                                                                       \
     if(!(check))                                                            \
@@ -15,15 +15,16 @@
                ======= stack ptr =       %p =======\n                       \
                ======= data ptr =        %p========\n                       \
                ======= stack size     = %d ========\n                       \
-               ======= stack max_size = %d=========\n                       \
-               ======= canary1 =        %d ===\n                       \
-               ======= canary2 =        %d ===\n                       \
-               ======= data - canary1 = %d ===\n                       \
-               ======= data - canary2 = %d ===\n                       \
+               ======= stack max_size = %d=====\n                       \
+               ======= canary1 =        %d ===\n                             \
+               ======= canary2 =        %d ===\n                            \
+               ======= data - canary1 = %d ===\n                            \
+               ======= data - canary2 = %d ===\n                            \
                ====================================\n",                     \
                 #check, __FILE__, __LINE__, ptr, ptr -> data, ptr -> size,  \
                 ptr -> max_size, ptr -> canary1, ptr -> canary2,            \
-                ((int*)(ptr -> data))[0],((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]);          \
+                ((int*)(ptr -> data))[0],                                      \
+                ((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]);          \
         abort();                                                            \
         }                                                                   \
     } while(0)
@@ -32,14 +33,23 @@
 #define assert(check)
 #endif
 
-
-#define unittest(what, ref) \
-     do                                                                  \
-    {                                                                    \
-        if(what != ref)                                                  \
-            printf("FAILED: "#what" = %d, expected %d\n",  (what), (ref));\
-        else                                                             \
-            printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");                                    \
+static int Nunittest = 0;
+static int Lunittest = 9;
+#define unittest(what, op, ref) 
+     do                                                                  
+    {    
+        (Nunittest)++;
+        printf("UNITTEST_%d", (Nunittest));
+        data_t result = (what);
+        data_t expected = (ref);
+        if ((result) op (expected)) printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");  
+        else           
+            printf("[     "RED"FAILED"RESET": #what #op  %lg, expected %lg\n",  (what), (ref));
+                                                                
+                                                      
+            
+        else                                                             
+            printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");                                    
     } while(0)
 
 #include <stdio.h>
@@ -48,7 +58,7 @@
 #include <string.h>
 #include <math.h>
 #define CAPACITY 3
-#define POISON -10000  ///problem with NAN, when data_t is int etc
+#define POISON -10000
 #define CANARY 1234
 
 typedef double data_t;
