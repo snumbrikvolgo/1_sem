@@ -14,7 +14,6 @@
 /**
     \brief The function calculates size of file
     @param [in] filename
-
     @return number of bytes
 */
 
@@ -23,7 +22,6 @@ int size_of_file(FILE * text);
 /**
     \brief The function reads the text into buffer
     @param [in] -
-
     @return filled buffer
 */
 
@@ -32,7 +30,6 @@ char* read_file();
 /**
     \brief The function counts number of lines in the text and separates the strings
     @param [in] pointer to the first element of buffer
-
     @return number of lines
 */
 
@@ -41,7 +38,6 @@ int number_of_lines(char* buffer);
 /**
     \brief The function creates a new massive of pointers
     @param [in] pointer to the first element of buffer
-
     @return a new massive
 */
 
@@ -51,7 +47,6 @@ char** creation_of_pointers(char* buffer);
     \brief The function compares any elements
     @param [in] a void input
     @param [in] b void output
-
     @return a result of comparison: True or False
 */
 
@@ -61,7 +56,6 @@ int comparator(const void* a, const void* b);
     \brief The function prints sorted text
     @param [in] pointer to the pointer of the beginning of the line
     @param [in] number of lines
-
     @return printed text
 */
 
@@ -71,7 +65,6 @@ void write_str(char** string, const int number_of_lines);
     \brief The function compares last letters till the string ends
     @param [in] a void input
     @param [in] b void output
-
     @return a result of comparison: True or False
 */
 
@@ -81,27 +74,24 @@ int reverse_comparator(const void* a, const void* b);
     \brief The function finds the last letter in the string
     @param [in] string
     @param [in] counter of symbols
-
     @return -
 */
-void Remote_to_last_letter(char **str, int counter);
+char* Remote_to_last_letter(char *str, int counter);
 
 /**
     \brief The function remotes to the end of the line
     @param [in] string
     @param [in] counter of symbols
-
     @return number of the last letter in line
 */
 
-int Remote_to_the_end(char **str, int *counter);
+int Remote_to_the_end(char **str, int counter);
 
 /**
     \brief The function reads the file, creates memory and marks first letters as pointers
     @param [in] text
     @param [in] number of strings
     @param [in] pointers to the beginnings of lines
-
     @return -
 */
 
@@ -109,18 +99,20 @@ void create_text(char **buffer, int *num_of_str, char*** pointers, char* filenam
 
 //-------------------------------------------------------------------------------------------------------
 
-int main()
+int main(int argc, char* argv[])
 {
+
     setlocale (LC_ALL, "Russian");
 
     char     *buffer = {0};
     int   num_of_str =  0 ;
     char ** pointers = {0};
-    char filename[50] = "";
+    //char filename[50] = "";
     printf("Enter the filename\n");
-    scanf("%s", &filename);
+    scanf("%s", argv[0]);
 
-    create_text(&buffer, &num_of_str, &pointers, &filename);
+
+    create_text(&buffer, &num_of_str, &pointers, argv[0]);
 
     qsort(pointers, num_of_str, sizeof(char*), comparator);
     write_str(pointers, num_of_str);
@@ -131,7 +123,7 @@ int main()
 
     C_FREE(buffer);
 
-    create_text(&buffer, &num_of_str, &pointers, &filename);
+    create_text(&buffer, &num_of_str, &pointers, argv[0]);
 
     write_str(pointers, num_of_str);
 
@@ -141,7 +133,7 @@ int main()
 
 //-------------------------------------------------------------------------------------------------------
 
-int size_of_file(FILE * text) //current position - done
+int size_of_file(FILE * text) ///current position - done
 {
     int current = 0;
     current = ftell(text);
@@ -248,11 +240,11 @@ int reverse_comparator(const void* a, const void* b)
     int counter1 = 0;
     int counter2 = 0;
 
-    counter1 = Remote_to_the_end(&str1, &counter1);
-    counter2 = Remote_to_the_end(&str2, &counter2);
+    counter1 = Remote_to_the_end(&str1, counter1);
+    counter2 = Remote_to_the_end(&str2, counter2);
 
-    Remote_to_last_letter(&str1, counter1);
-    Remote_to_last_letter(&str2, counter2);
+    str1 = Remote_to_last_letter(str1, counter1);
+    str2 = Remote_to_last_letter(str2, counter2);
 
     while (1)
     {
@@ -272,24 +264,24 @@ int reverse_comparator(const void* a, const void* b)
 
 //-------------------------------------------------------------------------------------------------------
 
-int Remote_to_the_end(char **str, int *counter)
+int Remote_to_the_end(char **str, int counter)
 {
     while ((**str != '\0'))
     {
-            (*str)++;
-        (*counter)++;
-
+        (*str)++;
+        counter++;
     }
-    return *counter;
+    return counter;
 }
 
 //-------------------------------------------------------------------------------------------------------
 
-void  Remote_to_last_letter(char **str, int counter)
+char* Remote_to_last_letter(char *str, int counter)
 {
-    while ((!isalpha(**str)||(**str == '\0'))
+    while ((!isalpha(*str)||(*str == '\0'))
           &&(counter)-- >= 0)
-        (*str)--;
+        (str)--;
+    return str;
 }
 
 //-------------------------------------------------------------------------------------------------------
