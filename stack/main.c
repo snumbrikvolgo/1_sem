@@ -17,9 +17,9 @@ int main()
     unittest(stackPop(&stack), =, 42.0, lg);
     unittest(stackPop(&stack), =, 43.0, lg);
     unittest(stackOK(&stack), =, 1, d);
-    unittest(stackOK(&stack), =, 1, d);  
+    unittest(stackOK(&stack), =, 1, d);
     unittest(stackDtor(&stack), =, 1, d);
-   
+
 
 
     return 0;

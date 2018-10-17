@@ -1,5 +1,7 @@
 #include "stack.h"
 
+//-------------------------------------------------------------------------------------------------------
+
 int stackCtor(stack_t* s)
 {
     assert(s != NULL, s);
@@ -14,6 +16,8 @@ int stackCtor(stack_t* s)
     return 1;
 }
 
+//-------------------------------------------------------------------------------------------------------
+
 int stackDtor(stack_t *s)
 {
     assert(stackOK(s), s);
@@ -22,10 +26,12 @@ int stackDtor(stack_t *s)
     s -> data = NULL;
     s -> max_size = -1;
     s -> size = -1;
-    
+
 
     return 1;
 }
+
+//-------------------------------------------------------------------------------------------------------
 
 int stackOK(const stack_t *s)
 {
@@ -35,6 +41,8 @@ int stackOK(const stack_t *s)
             && (((int*)(s-> data))[0] == CANARY)
             && (((int*)((s -> data) + sizeof(data_t)*(s -> max_size) + sizeof(int)))[0] == CANARY));
 }
+
+//-------------------------------------------------------------------------------------------------------
 
 int  stackPush(stack_t *s, const data_t value)
 {
@@ -52,6 +60,8 @@ int  stackPush(stack_t *s, const data_t value)
         return stackPush(s, value);
      }
 }
+
+//-------------------------------------------------------------------------------------------------------
 
 data_t stackPop (stack_t* s)
 {
@@ -76,6 +86,8 @@ data_t stackPop (stack_t* s)
     }
 }
 
+//-------------------------------------------------------------------------------------------------------
+
 data_t stackTop(stack_t *s)
 {
     assert(stackOK(s), s);
@@ -86,6 +98,8 @@ data_t stackTop(stack_t *s)
     }
     return (s -> data + sizeof(data_t) * (s -> size - 1) + sizeof(int))[0];
 }
+
+//-------------------------------------------------------------------------------------------------------
 
 void stackChangeSize(stack_t* s)
 {
@@ -101,14 +115,14 @@ void stackChangeSize(stack_t* s)
     if ((s -> size) + 1 >= s -> max_size)
     {
         s -> max_size = 2 *(s ->  max_size + 2);
-        s -> data = (data_t*)realloc (s -> data,  (s -> max_size) * sizeof(data_t) + 2 * sizeof(int));  
+        s -> data = (data_t*)realloc (s -> data,  (s -> max_size) * sizeof(data_t) + 2 * sizeof(int));
        ((int*)((s -> data) + sizeof(data_t)*(s -> max_size) + sizeof(int)))[0] = CANARY;
         assert(stackOK(s), s);
     }
 
 }
 
-
+//-------------------------------------------------------------------------------------------------------
 
 int stackSize(stack_t* s)
 {
