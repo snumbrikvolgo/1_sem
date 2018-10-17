@@ -1,3 +1,5 @@
+#ifndef STACK_H_INCLUDED
+#define STACK_H_INCLUDED
 #define RESET   "\033[0m"
 #define RED     "\a\033[1;31m"
 #define GREEN   "\033[1;32m"
@@ -5,29 +7,65 @@
 #define DEBUG
 
 #ifdef DEBUG
-#define assert(check, ptr, canary_type)                                     \
+
+#define assert(check, ptr)                                                   \
+    do                                                                       \
+    {                                                                        \
+        if(!(check))                                                         \
+        {                                                                    \
+                    printf("                                               \n\
+                            Something goes wrong: %s in %s, %d             \n\
+                            ===================================            \n\
+                            ======= stack ptr      = %p =======            \n\
+                            ======= data ptr       = %p========            \n\
+                            ======= stack size     = %d =======            \n\
+                            ======= stack max_size = %d=====               \n\
+                            ======= canary1 =        %d ===                \n\
+                            ======= canary2 =        %d ===              \n",\
+                            #check, __FILE__, __LINE__,                      \
+                            ptr, ptr -> data, ptr -> size,                   \
+                            ptr -> max_size, ptr -> canary1, ptr -> canary2);\
+                    if (ptr -> data != NULL)                                 \
+                    {                                                        \
+                    printf("                                               \n\
+                            ======= data - canary1 = %d ===                \n\
+                            ======= data - canary2 = %d ===              \n",\
+                                                                             \
+                            ((int*)(ptr -> data))[0],                        \
+                ((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]);\
+                    }                                                        \
+                    printf("\
+                            ====================================        \n");\
+                                                                             \
+            abort();                                                         \
+        }                                                                    \
+    } while(0)
+
+
+#define assert1(check, ptr)                                                  \
     do                                                                      \
     {                                                                       \
-    if(!(check))                                                            \
+        if(!(check))                                                        \
         {                                                                   \
-        printf("Something goes wrong: %s in %s, %d \n                       \
-               ====================================\n                       \
-               ======= stack ptr =       %p =======\n                       \
-               ======= data ptr =        %p========\n                       \
-               ======= stack size     = %d ========\n                       \
-               ======= stack max_size = %d=====\n                       \
-               ======= canary1 =        %d ===\n                             \
-               ======= canary2 =        %d ===\n                            \
-               ======= data - canary1 = %d ===\n                            \
-               ======= data - canary2 = %d ===\n                            \
-               ====================================\n",                     \
-                #check, __FILE__, __LINE__, ptr, ptr -> data, ptr -> size,  \
-                ptr -> max_size, ptr -> canary1, ptr -> canary2,            \
-                ((int*)(ptr -> data))[0],                                      \
-                ((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]);          \
-        abort();                                                            \
+            if (ptr != NULL) {                                              \
+                printf ("Something goes wrong: %s in %s, %d \n", #check, __FILE__, __LINE__);\
+                printf ("====================================\n");          \
+                printf ("======= stack ptr =       %p =======\n", ptr);     \
+                printf ("======= data ptr =        %p========\n", ptr -> data);  \
+                printf ("======= stack size     = %d ========\n", ptr -> size);  \
+                printf ("======= stack max_size = %d =====\n", ptr -> max_size); \
+                printf ("======= canary1 =        %d ===\n", ptr -> canary1);    \
+                printf ("======= canary2 =        %d ===\n", ptr -> canary2);    \
+                printf ("======= data - canary1 = %d ===\n", ((int*)(ptr -> data))[0]); \
+                printf ("======= data - canary2 = %d ===\n", ((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]); \
+                printf ("====================================\n");               \
+            }                                                               \
+            else                                                            \
+                printf("LEZHAT + SOSAT");                                   \
+            abort();                                                        \
         }                                                                   \
     } while(0)
+
 
 #else
 #define assert(check)
@@ -35,29 +73,26 @@
 
 static int Nunittest = 0;
 static int Lunittest = 9;
-#define unittest(what, op, ref) 
-     do                                                                  
-    {    
-        (Nunittest)++;
-        printf("UNITTEST_%d", (Nunittest));
-        data_t result = (what);
-        data_t expected = (ref);
-        if ((result) op (expected)) printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");  
-        else           
-            printf("[     "RED"FAILED"RESET": #what #op  %lg, expected %lg\n",  (what), (ref));
-                                                                
-                                                      
-            
-        else                                                             
-            printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");                                    
-    } while(0)
+#define unittest(what, op, ref, ftype)                                                                                      \
+     do                                                                                                                     \
+    {                                                                                                                       \
+        (Nunittest)++;                                                                                                      \
+        printf("UNITTEST_%d", (Nunittest));                                                                                 \
+        data_t result = (what);                                                                                             \
+                                                                                                                            \
+        data_t expected = (ref);                                                                                            \
+        if ((result) op (expected)) printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");                                           \
+                                                                                                                            \
+        else                                                                                                                \
+            printf("[  "RED"FAILED"RESET": "#what" "#op"  %" #ftype ", expected %" #ftype "  ]\n",  (what), (ref));         \
+         printf("[%.*s%.*s]\n\n", (Nunittest), "||||||||||||||||", ((Lunittest) - (Nunittest)) , "...............");        \
+    } while(0)                                                                               
 
 #include <stdio.h>
-//#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#define CAPACITY 3
+#define CAPACITY 15
 #define POISON -10000
 #define CANARY 1234
 
@@ -79,5 +114,7 @@ int   stackOK(const stack_t* s);
 void  stackChangeSize(stack_t* s);
 data_t stackTop(stack_t* s);
 int stackSize(stack_t* s);
+data_t stackPop (stack_t* s);
 
 
+#endif // STACK_H_INCLUDED
