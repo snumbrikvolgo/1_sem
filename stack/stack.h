@@ -3,12 +3,11 @@
 #define RESET   "\033[0m"
 #define RED     "\a\033[1;31m"
 #define GREEN   "\033[1;32m"
-#define ttype 1
 #define DEBUG
 
 #ifdef DEBUG
 
-#define assert(check, ptr)                                                   \
+#define dump(check, ptr)                                                   \
     do                                                                       \
     {                                                                        \
         if(!(check))                                                         \
@@ -16,10 +15,10 @@
                     printf("                                               \n\
                             Something goes wrong: %s in %s, %d             \n\
                             ===================================            \n\
-                            ======= stack ptr      = %p =======            \n\
-                            ======= data ptr       = %p========            \n\
-                            ======= stack size     = %d =======            \n\
-                            ======= stack max_size = %d=====               \n\
+                            ======= stack ptr = %p                         \n\
+                            ======= data ptr  = %p                         \n\
+                            ======= stack size     = %d =====              \n\
+                            ======= stack max_size = %d =====              \n\
                             ======= canary1 =        %d ===                \n\
                             ======= canary2 =        %d ===              \n",\
                             #check, __FILE__, __LINE__,                      \
@@ -35,32 +34,31 @@
                 ((int*)((ptr -> data) + sizeof(data_t)*(ptr -> max_size) + sizeof(int)))[0]);\
                     }                                                        \
                     printf("\
-                            ====================================        \n");\
+                            ==================================          \n");\
                                                                              \
-            abort();                                                         \
         }                                                                    \
     } while(0)
 
 #else
 
-#define assert(check)
+#define dump(check)
 #endif
 
 static int Nunittest = 0;
-static int Lunittest = 9;
+static int Lunittest = 10;
 
 #define unittest(what, op, ref, ftype)                                                                                      \
      do                                                                                                                     \
     {                                                                                                                       \
         (Nunittest)++;                                                                                                      \
-        printf("UNITTEST_%d", (Nunittest));                                                                                 \
-        data_t result = (what);                                                                                             \
+        printf("UNITTEST_%d\n", (Nunittest));                                                                                 \
+        data_t result = (what);                                                                                           \
                                                                                                                             \
         data_t expected = (ref);                                                                                            \
-        if ((result) op (expected)) printf("[  "GREEN"%s"RESET"  ]\n", "PASSED");                                           \
+        if ((result) op (expected)) printf("[  "GREEN"PASSED"RESET"  ]\n");                                           \
                                                                                                                             \
         else                                                                                                                \
-            printf("[  "RED"FAILED"RESET": "#what" "#op"  %" #ftype ", expected %" #ftype "  ]\n",  (what), (ref));         \
+            printf("[  "RED"FAILED"RESET": "#what" "#op"  %" #ftype " expected %" #ftype "  ]\n", (ref), (ref));         \
          printf("[%.*s%.*s]\n\n", (Nunittest), "||||||||||||||||", ((Lunittest) - (Nunittest)) , "...............");        \
     } while(0)
 
@@ -68,9 +66,11 @@ static int Lunittest = 9;
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#define CAPACITY 15
+#define CAPACITY 64
 #define POISON -10000
 #define CANARY 1234
+
+    
 
 typedef double data_t;
 
@@ -87,7 +87,7 @@ int  stackCtor(stack_t* s);
 int  stackDtor(stack_t* s);
 int  stackPush(stack_t *s, const data_t value);
 int  stackOK(const stack_t* s);
-void stackChangeSize(stack_t* s);
+int  stackChangeSize(stack_t* s);
 data_t stackTop(stack_t* s);
 int stackSize(stack_t* s);
 data_t stackPop (stack_t* s);
