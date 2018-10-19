@@ -11,9 +11,24 @@
         free(p);        \
         p = NULL;       \
     } while(0)
+
+
+
+/**
+    \brief The function reads the file, creates memory and marks first letters as pointers
+    @param [in] text
+    @param [in] number of strings
+    @param [in] pointers to the beginnings of lines
+
+    @return -
+*/
+
+void create_text(char **buffer, int *num_of_str, char*** pointers, char* filename);
+
 /**
     \brief The function calculates size of file
     @param [in] filename
+
     @return number of bytes
 */
 
@@ -22,6 +37,7 @@ int size_of_file(FILE * text);
 /**
     \brief The function reads the text into buffer
     @param [in] -
+
     @return filled buffer
 */
 
@@ -30,6 +46,7 @@ char* read_file();
 /**
     \brief The function counts number of lines in the text and separates the strings
     @param [in] pointer to the first element of buffer
+
     @return number of lines
 */
 
@@ -38,6 +55,7 @@ int number_of_lines(char* buffer);
 /**
     \brief The function creates a new massive of pointers
     @param [in] pointer to the first element of buffer
+
     @return a new massive
 */
 
@@ -47,24 +65,17 @@ char** creation_of_pointers(char* buffer);
     \brief The function compares any elements
     @param [in] a void input
     @param [in] b void output
+
     @return a result of comparison: True or False
 */
 
 int comparator(const void* a, const void* b);
 
 /**
-    \brief The function prints sorted text
-    @param [in] pointer to the pointer of the beginning of the line
-    @param [in] number of lines
-    @return printed text
-*/
-
-void write_str(char** string, const int number_of_lines);
-
-/**
     \brief The function compares last letters till the string ends
     @param [in] a void input
     @param [in] b void output
+
     @return a result of comparison: True or False
 */
 
@@ -74,6 +85,7 @@ int reverse_comparator(const void* a, const void* b);
     \brief The function finds the last letter in the string
     @param [in] string
     @param [in] counter of symbols
+
     @return -
 */
 char* Remote_to_last_letter(char *str, int counter);
@@ -82,20 +94,21 @@ char* Remote_to_last_letter(char *str, int counter);
     \brief The function remotes to the end of the line
     @param [in] string
     @param [in] counter of symbols
+
     @return number of the last letter in line
 */
 
 int Remote_to_the_end(char **str, int counter);
 
 /**
-    \brief The function reads the file, creates memory and marks first letters as pointers
-    @param [in] text
-    @param [in] number of strings
-    @param [in] pointers to the beginnings of lines
-    @return -
+    \brief The function prints sorted text
+    @param [in] pointer to the pointer of the beginning of the line
+    @param [in] number of lines
+
+    @return printed text
 */
 
-void create_text(char **buffer, int *num_of_str, char*** pointers, char* filename);
+void write_str(char** string, const int number_of_lines);
 
 //-------------------------------------------------------------------------------------------------------
 
@@ -107,7 +120,7 @@ int main(int argc, char* argv[])
     char     *buffer = {0};
     int   num_of_str =  0 ;
     char ** pointers = {0};
-    //char filename[50] = "";
+
     printf("Enter the filename\n");
     scanf("%s", argv[0]);
 
@@ -133,6 +146,17 @@ int main(int argc, char* argv[])
 
 //-------------------------------------------------------------------------------------------------------
 
+void create_text(char **buffer, int *num_of_str, char*** pointers, char* filename)
+{
+    *buffer = read_file(filename);
+
+    *num_of_str = number_of_lines(*buffer);
+
+    *pointers = creation_of_pointers(*buffer);
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 int size_of_file(FILE * text) ///current position - done
 {
     int current = 0;
@@ -151,6 +175,7 @@ int size_of_file(FILE * text) ///current position - done
 }
 
 //-------------------------------------------------------------------------------------------------------
+
 char* read_file(const char * fl)
 {
     FILE* onegin = fopen(fl, "rb");
@@ -164,9 +189,10 @@ char* read_file(const char * fl)
     fread(buffer, number_of_symbols, sizeof(*buffer), onegin);
     fclose(onegin);
     return buffer;
-
 }
+
 //-------------------------------------------------------------------------------------------------------
+
 
 int number_of_lines(char* buffer)
 {
@@ -220,7 +246,9 @@ int comparator(const void* a, const void* b)
         str2++;
     return strcmp(str1, str2);
 }
+
 //-------------------------------------------------------------------------------------------------------
+
 void write_str(char** string, const int number_of_lines)
 {
     for (int i = 0; i< number_of_lines; i++)
@@ -266,12 +294,8 @@ int reverse_comparator(const void* a, const void* b)
 
 int Remote_to_the_end(char **str, int counter)
 {
-    while ((**str != '\0'))
-    {
-        (*str)++;
-        counter++;
-    }
-    return counter;
+    counter = *(str + 1) - *(str);
+        return counter;
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -285,12 +309,3 @@ char* Remote_to_last_letter(char *str, int counter)
 }
 
 //-------------------------------------------------------------------------------------------------------
-
-void create_text(char **buffer, int *num_of_str, char*** pointers, char* filename)
-{
-    *buffer = read_file(filename);
-
-    *num_of_str = number_of_lines(*buffer);
-
-    *pointers = creation_of_pointers(*buffer);
-}
