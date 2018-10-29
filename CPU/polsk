@@ -1,0 +1,8 @@
+begin
+push    8.5
+push         5
+add
+pop
+out
+end
+
