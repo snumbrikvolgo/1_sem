@@ -1,8 +1,18 @@
 begin
+sin
+out
+out
+cos
+tan
 push    8.5
-push         5
+push 7
 add
 pop
 out
+out
+tan
+out
+out
+out
+out
 end
-

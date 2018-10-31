@@ -34,6 +34,7 @@ enum commands
     CMD_COS = 82,
     CMD_TAN = 83,
     CMD_OUT = 84,
+    CMD_IN = 85,
     
     //#undef CMD
     /*BEGIN = 64,

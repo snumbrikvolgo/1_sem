@@ -35,8 +35,9 @@ int detect_end(char* buffer, int* ptr, char* mem, int* index)
         {
             *(mem + (*index)) = (unsigned char) CMD_END;
             (*index)++;
+            printf("%s", buffer);
             //(*ptr) += sizeof("end");
-            
+            (*ptr) ++;
             
             return 1;
         }
@@ -50,7 +51,7 @@ int detect_out(char* buffer, int* ptr, char* mem, int* index)
         {
             *(mem + (*index)) = (unsigned char) CMD_OUT;
             (*index)++;
-            //(*ptr) += sizeof("out");
+            (*ptr) += sizeof("out");
        
             return 1;
         }
@@ -63,7 +64,8 @@ int detect_push(char* buffer, int* ptr, char* mem, int* index)
         {
             *(mem + (*index)) = (unsigned char) CMD_PUSH;
             (*index)++;
-            (*ptr) += sizeof("push");
+            (*ptr) += sizeof("push"
+);
 
             double value = 0;
             int counter = 0;
@@ -72,7 +74,7 @@ int detect_push(char* buffer, int* ptr, char* mem, int* index)
             *index += sizeof(double);
 
             printf("%d\n", counter);
-            //(*ptr) += counter; 
+            (*ptr) += counter; 
             printf("value == %lg\n", value);  
             return 1;
    
@@ -95,7 +97,7 @@ int detect_in(char* buffer, int* ptr, char* mem, int* index)
             *index += sizeof(double);
 
             //printf("%d\n", counter);
-            //(*ptr) += counter; 
+            (*ptr) += counter; 
             printf("value == %lg\n", value);  
             return 1;
    
@@ -111,7 +113,7 @@ int detect_pop(char* buffer, int* ptr, char* mem, int* index)
         {
             *(mem + (*index)) = (unsigned char) CMD_POP;
             (*index)++;
-            //(*ptr) += sizeof("pop");
+            (*ptr) += sizeof("pop");
             
             return 1;
         }
@@ -125,7 +127,7 @@ int detect_add(char* buffer, int* ptr, char* mem, int* index)
                 
             *(mem + (*index)) = (unsigned char) CMD_ADD;
             (*index)++;
-            //(*ptr) += sizeof("add");
+            (*ptr) += sizeof("add");
             
             return 1;
         }
@@ -140,7 +142,7 @@ int detect_sub (char* buffer, int* ptr, char* mem, int* index)
                
             *(mem + (*index)) = (unsigned char) CMD_SUB;
             (*index)++;
-            //(*ptr) += sizeof("sub");
+            (*ptr) += sizeof("sub");
             
             return 1;
         }
@@ -154,7 +156,7 @@ int detect_mul (char* buffer, int* ptr, char* mem, int* index)
             printf ("%d\n", 0);    
             *(mem + (*index)) = (unsigned char) CMD_MUL;
             (*index)++;
-            //(*ptr) += sizeof("mul");
+            (*ptr) += sizeof("mul");
             
             return 1;
         }
@@ -168,7 +170,7 @@ int detect_div (char* buffer, int* ptr, char* mem, int* index)
                
             *(mem + (*index)) = (unsigned char) CMD_DIV;
             (*index)++;
-            //(*ptr) += sizeof("div");
+            (*ptr) += sizeof("div");
             
             return 1;
         }
@@ -239,7 +241,7 @@ int detect_sqrt (char* buffer, int* ptr, char* mem, int* index)
                
             *(mem + (*index)) = (unsigned char) CMD_SQRT;
             (*index)++;
-            //(*ptr) += sizeof("sqrt");
+            (*ptr) += sizeof("sqrt");
             
             return 1;
         }
@@ -267,7 +269,7 @@ int detect_cos(char* buffer, int* ptr, char* mem, int* index)
             
             *(mem + (*index)) = (unsigned char) CMD_COS;
             (*index)++;
-            //(*ptr) += sizeof("cos");
+            (*ptr) += sizeof("cos");
             
             return 1;
         }
@@ -281,7 +283,7 @@ int detect_tan(char* buffer, int* ptr, char* mem, int* index)
              
             *(mem + (*index)) = (unsigned char) CMD_TAN;
             (*index)++;
-            //(*ptr) += sizeof("tan");
+            (*ptr) += sizeof("tan");
             
             return 1;
         }
@@ -300,31 +302,30 @@ int main(int argc, char* argv[])
     int ptr = 0;
     int index = 0;
     //printf ("%d\n", strncmp(buffer + (ptr), "push", strlen ("push")));
-    while (*buffer != '\0')
+    while (*(buffer ) != '\0')
     {
         if(strncmp(buffer + (ptr), "begin", strlen("begin")) == 0)
              detect_begin(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "in", strlen("in")) == 0)
              detect_in(buffer, &ptr, code, &index);
-      
+        //printf("%s ", code);
         if(strncmp(buffer + (ptr), "push", strlen("push")) == 0)
              detect_push(buffer, &ptr, code, &index);
-
+        //printf("%s ", code);
         if(strncmp(buffer + (ptr), "pop", strlen("pop")) == 0)
              detect_pop(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "mul", strlen("mul")) == 0)
              detect_mul(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "div", strlen("div")) == 0)
-             detect_mul(buffer, &ptr, code, &index);
+             detect_div(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "add", strlen("add")) == 0)
              detect_add(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "sub", strlen("sub")) == 0)
              detect_sub(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "end", strlen("end")) == 0)
              detect_end(buffer, &ptr, code, &index);
-         if(strncmp(buffer + (ptr), "out", strlen("out")) == 0)
+        if(strncmp(buffer + (ptr), "out", strlen("out")) == 0)
              detect_out(buffer, &ptr, code, &index);
-        
         if(strncmp(buffer + (ptr), "sqrt", strlen("sqrt")) == 0)
              detect_sqrt(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "sin", strlen("sin")) == 0)
@@ -333,7 +334,7 @@ int main(int argc, char* argv[])
              detect_cos(buffer, &ptr, code, &index);
         if(strncmp(buffer + (ptr), "tan", strlen("tan")) == 0)
              detect_tan(buffer, &ptr, code, &index);
-        buffer++;
+        //buffer++;
     }
     /*detect_begin(buffer, &ptr, code, &index);
     printf("%s", buffer + ptr);

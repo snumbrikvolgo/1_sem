@@ -21,4 +21,5 @@
     CMD(COS, 82),
     CMD(TAN, 83),
     CMD(OUT, 84),
+    CMD(ENTER, 85),
 #endif
