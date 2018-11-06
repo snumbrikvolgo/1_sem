@@ -1,6 +1,5 @@
 #ifndef WORK_FILE_STRINGS_H_INCLUDED
 #define WORK_FILE_STRINGS_H_INCLUDED
-#pragma once
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>

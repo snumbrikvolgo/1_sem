@@ -32,11 +32,12 @@ struct labels
 };
 
 
-int read_code(int argc, char* argv[])
+int read_code()
 {
     FILE * file = fopen("debug.txt", "w");
-    FILE * input = fopen(argv[1], "rw");
-    char * buffer =  read_file(argv[1]);
+    FILE * input = fopen("polsk1", "rw");
+    const char* name = "polsk1";
+    char * buffer =  read_file(name);
     int file_size = size_of_file(input);
     char* code = (char*)calloc(file_size + 1, sizeof(*code));
     int ptr = 0;
@@ -84,7 +85,12 @@ int read_code(int argc, char* argv[])
         }  
     
     //printf("%s", buffer + ptr);
-    fwrite(code, sizeof(char), file_size, file);
+    printf("%s", code);
+    int pidr = fwrite(code, sizeof(char), file_size, file);
+    printf("pidr = %d", pidr);
+    printf("%s", code);
+    fclose(file);
+    fclose(input);
     C_FREE(buffer);
     C_FREE(code);
        return 0;
