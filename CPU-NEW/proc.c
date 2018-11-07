@@ -7,13 +7,14 @@
 
 #define CMD(name, num) CMD_##name = num,
 #define CMD_COMPLEX(name, num) CMD_COMPLEX_##name = num,
+#define CMD_REG(name, reg_name, num) CMD_REG_##name = num,
     
 
-enum commands
+enum asm_commands
 {
 #include "commands.h"            
 };
-
+#undef CMD_REG
 #undef CMD
 #undef CMD_COMPLEX
 
@@ -37,23 +38,25 @@ int Compiler(char* code, const int size, CPU_t* s)
 {
     int index = 0;
     int command = 0;
-    int value = 0;
-    printf("size == %d", size);
+    double value = 0;
+    printf("size == %d\n", size);
     while(index <= size)
     {   
         value = 0;
         command = 0;
         memcpy(&command, (code + index), sizeof(char)); 
-        printf("eto == %c", command);
+        printf("eto == %c\n", command);
         switch (command)
             {
+                
                 case CMD_COMPLEX_PUSH: {
                                         index++;
                                         memcpy(&value, (code + index), sizeof(double));
+                                        printf("%lg", value);
                                         stackPush(&(s -> stack), value);
                                         index += sizeof(double);
                                         printf("COMMAND %d\n", command);
-                                        printf("%lg", value);
+                                        
                                         break;
                                         
                                        }
@@ -154,12 +157,62 @@ int Compiler(char* code, const int size, CPU_t* s)
                                    printf(" out == %lg \n", stackPop(&(s -> stack)));
                                    printf("COMMAND %d\n", command);
                                 }
+                case CMD_REG_R_PUSH:
+                                {
+                                   index++;
+                                   switch(code[index])
+                                   case 1:
+                                        {
+                                            stackPush(&(s -> stack), (s -> regs.rax));
+                                            break;
+                                         }
+                                    case 2:
+                                        {
+                                            stackPush(&(s -> stack), (s -> regs.rbx));
+                                            break;
+                                         }
+                                    case 3:
+                                        {
+                                            stackPush(&(s -> stack), (s -> regs.rcx));
+                                            break;
+                                         }
+                                   case 4:
+                                        {
+                                            stackPush(&(s -> stack), (s -> regs.rdx));
+                                            break;
+                                         }
+                                }
+                case CMD_REG_R_POP:
+                                {
+                                   index++;
+                                   switch(code[index])
+                                   case 1:
+                                        {
+                                            s -> regs.rax = stackPop(&(s -> stack));
+                                            break;
+                                         }
+                                    case 2:
+                                        {
+                                            s -> regs.rbx = stackPop(&(s -> stack));
+                                            break;
+                                         }
+                                    case 3:
+                                        {
+                                            s -> regs.rcx = stackPop(&(s -> stack));
+                                            break;
+                                         }
+                                   case 4:
+                                        {
+                                            s -> regs.rdx = stackPop(&(s -> stack));
+                                            break;
+                                         }
+                                }
+                                    
                 default: {
                             printf("keze\n");
                             abort();
                             break;
                           }
-
                 
             }
             

@@ -6,11 +6,11 @@
     CMD(ADD, 69)
     CMD(SUB, 70)
     CMD(END, 71)
-   //CMD_REG(PUSH_REG, REG_NAME, 72),
-   //CMD_REG(POP_REG, REG_NAME, 73),
+    CMD_REG(R_PUSH, REG_NAME, 73)
+    CMD_REG(R_POP, REG_NAME, 72)
    //CMD_MEM(PUSHMEM, 74),
    //CMD_MEM(POPMEM, 75),
-   // CMD_JMP(JMP, 76),
+   //CMD_JMP(JMP, 76),
    //CMD_JMP(JA, 77),
    //CMD_JMP(JB, 78),
    //CMD_JMP(JE, 79),
