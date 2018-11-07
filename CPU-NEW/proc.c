@@ -186,9 +186,12 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 {
                                    index++;
                                    switch(code[index])
+                                   {
                                    case 1:
                                         {
                                             s -> regs.rax = stackPop(&(s -> stack));
+                                            printf("%d", code[index]);
+                                            index++;
                                             break;
                                          }
                                     case 2:
@@ -206,6 +209,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                             s -> regs.rdx = stackPop(&(s -> stack));
                                             break;
                                          }
+                                    }
                                 }
                                     
                 default: {

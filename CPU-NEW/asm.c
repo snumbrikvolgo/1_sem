@@ -90,7 +90,7 @@ int read_code()
                     {\
                         code[index++] = 4;\
                     }\
-                ptr++;\
+                ptr += strlen(#reg_name) * sizeof(char);\
                 printf("posle push pop reg %s\n", buffer + ptr);\
             }
 
