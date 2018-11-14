@@ -1,0 +1,34 @@
+digraph G{
+rankdir = LR;
+	node[shape = "box", color="black", fontsize=14];
+	edge[color="black"];
+	canary1 [label = "Canary1 = 1337"]
+	canary2 [label = "Canary2 = 1337"]
+    size [label ="Size = 2"]
+	elem_1 [shape = box , label = "<ptr>1
+HEAD
+0x55da133cb2c0 | {<prev> prev
+0x55da133cb2f0
+| <next> next
+ 0x55da133cb260} |{canary1
+ 1337 | canary2
+ 1337}"]	elem_2 [shape = box , label = "<ptr>2
+TAIL
+0x55da133cb260 | {<prev> prev
+0x55da133cb2c0
+| <next> next
+ 0x55da133cb290} |{canary1
+ 1337 | canary2
+ 1337}"]	elem_3 [shape = box , label = "<ptr>3
+0x55da133cb290 | {<prev> prev
+0x55da133cb260
+| <next> next
+ (nil)} |{canary1
+ 0 | canary2
+ 1337}"]
+	elem_1:<prev> -> elem_0:<ptr>
+	elem_1:<next> -> elem_2:<ptr>
+	elem_2:<prev> -> elem_1:<ptr>
+	elem_2:<next> -> elem_3:<ptr>
+	elem_3:<prev> -> elem_2:<ptr>
+}
