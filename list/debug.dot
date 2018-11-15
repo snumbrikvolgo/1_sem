@@ -1,0 +1,9 @@
+digraph G{
+rankdir = LR;
+	node[shape = "box", color="black", fontsize=14];
+	edge[color="black"];
+	canary1 [label = "Canary1 = 1337"]
+	canary2 [label = "Canary2 = 1337"]
+size [label ="Size = 0"]
+
+}
