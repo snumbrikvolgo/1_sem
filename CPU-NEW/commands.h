@@ -6,17 +6,27 @@
     CMD(ADD, 69)
     CMD(SUB, 70)
     CMD(END, 71)
+
     CMD_REG(R_PUSH, REG_NAME, 73)
     CMD_REG(R_POP, REG_NAME, 72)
-   //CMD_MEM(PUSHMEM, 74),
-   //CMD_MEM(POPMEM, 75),
-   //CMD_JMP(JMP, 76),
-   //CMD_JMP(JA, 77),
-   //CMD_JMP(JB, 78),
-   //CMD_JMP(JE, 79),
-    CMD(SQRT, 80)
-    CMD(SIN, 81)
-    CMD(COS, 82)
-    CMD(TAN, 83)
-    CMD(OUT, 84)
-    CMD(IN, 85)
+   
+  
+    CMD(SQRT, 73)
+    CMD(SIN, 74)
+    CMD(COS, 75)
+    CMD(TAN, 76)
+    CMD(OUT, 77)
+    CMD(IN, 78)
+    
+    CMD_JMP(JMP, 79)
+    CMD_JMP(JA, 80)
+    CMD_JMP(JB, 81)
+    CMD_JMP(JE, 82)
+    CMD_JMP(JAE, 83)
+    CMD_JMP(JBE, 84)
+    CMD_JMP(JNE, 85)
+    CMD_JMP(CALL, 86)
+    CMD(CUR, 87)
+
+    //CMD_MEM(PUSHMEM, 74)
+   //CMD_MEM(POPMEM, 75)
