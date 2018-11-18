@@ -56,10 +56,7 @@ int read_code()
     int index = 0;
 
     label_t labels = {0};
-    
 
-    printf("original : %s", buffer);
-    
    int quantity = 0;
     while(quantity < 2)
        {      
@@ -81,32 +78,22 @@ int read_code()
             #define CMD(name, num) \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
-                printf("dlina" #name "%zd\n", strlen(#name));\
                 ptr += strlen(#name) * sizeof(char);\
                 code[index++] = num;\
-                printf("current ostatok = %s", (buffer + ptr));\
             }  
  
            #define CMD_REG(name, reg_name, num)  \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
-                printf("\nchto v nachale commandy %c\n", *(buffer + ptr));\
-                printf("dlina "#name"  %zd\n", strlen(#name));\
                 ptr += strlen(#name) * sizeof(char);\
-                printf("ptr == %zd\n",strlen(#name));\
-                printf("na chato sdvinulos %d\n", *(buffer + ptr));\
                 code[index++] = num;\
                 while (isspace(*(buffer + ptr)))\
                     {\
                         ptr++;\
                     }\
-                printf("na chato sdvinulos conec %c\n", *(buffer + ptr));\
                 if (strncmp(buffer + (ptr), "RAX", strlen("RAX")) == 0) \
                     {\
-                        printf("compare with rax %d\n", strncmp(buffer + (ptr), "RAX", strlen("RAX")));\
                         code[index++] = '1';\
-                        printf("rax = %d\n", code[index - 1]);\
-                        printf("posle push pop reg %s\n", buffer + ptr);\
                     }\
                 if (strncmp(buffer + (ptr), "RBX", strlen("RBX")) == 0) \
                     {\
@@ -120,9 +107,7 @@ int read_code()
                     {\
                         code[index++] = '4';\
                     }\
-                printf("%zd", strlen(#reg_name));\
                 ptr += 3 * sizeof(char);\
-                printf("posle push pop reg %s\n", buffer + ptr);\
             }
 
            #define CMD_COMPLEX(name, num)   \
@@ -130,7 +115,6 @@ int read_code()
             { \
                 ptr += strlen(#name)*sizeof(char);\
                 code[index++] = num;\
-                printf("%zd\n", strlen(#name));\
                 while (isspace(*(buffer + ptr)))\
                     {\
                         ptr++;\
@@ -138,7 +122,6 @@ int read_code()
                 double value = 0;                                       \
                 int counter = 0;                                        \
                 sscanf(buffer + (ptr), " %lg %n", &value, &counter);    \
-                printf("value == %lg\n", value);\
                 memcpy(code + (index), &value, sizeof(double));         \
                 index += sizeof(double);                                \
                 ptr += counter;                                         \
@@ -183,7 +166,6 @@ int read_code()
 
             while (isspace(*(buffer + ptr)))
                 {
-                    printf("perehod\n");
                     ptr++;
                 } 
            
@@ -192,9 +174,6 @@ int read_code()
             quantity++;
             index = 0;
         }  
-    
-    printf("sovsem ostatok %s", buffer + ptr);
-    printf("%s", code);
     fwrite(code, sizeof(char), file_size, file);
     fclose(file);
     fclose(input);
@@ -203,10 +182,4 @@ int read_code()
        return 0;
     
 }
-
-
-
-
-
-
 
