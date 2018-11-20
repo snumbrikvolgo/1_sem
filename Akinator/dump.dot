@@ -1,0 +1,13 @@
+digraph Tree
+{
+rankdir=TB
+		node [ shape = "box", color = "black" ]
+		edge [ color = "black" ]
+
+	size [ label ="size = 2" ]
+
+subgraph clust_1{
+randir = HR;
+	elem_1 [ shape = "record", label = "{ <pointer> 1\n0x55e9e23a6690|  { value = A\n  | <parent> parent\n(nil) } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+}
