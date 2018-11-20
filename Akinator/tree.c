@@ -114,6 +114,7 @@ node_t* nodeDelete(tree_t* s, node_t* parent)
         nodeDelete(s, parent -> left);
     if (parent -> right != NULL)
         nodeDelete(s, parent -> right);
+    (s -> size)--;
 
     treeDump(treeOK(s), s);
         
@@ -326,6 +327,10 @@ int main()
     printf(" root ptr %p\n", nodeRoot(tree));
     nodeDelete(tree, tree -> root -> left);
     //treeDtor(tree);
+    nodePush(tree, tree -> root, LEFT, 66);
+    nodePush(tree, tree -> root, RIGHT, 80);
+    nodePush(tree, tree -> root -> right, RIGHT, 79);
+    nodePush(tree, tree -> root -> right, LEFT, 78);
     treeShow(tree);
     
 }
