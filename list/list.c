@@ -1,51 +1,19 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <assert.h>
-#include <errno.h>
-
-
-#define POISON 1488
-#define CANARY 1337
-#define MAX_SIZE 50
-
-
-enum error
+#include "list.h"
+int main()
 {
-    DEADCANARY = 10001000,
-    NULLPTR = 10001001,
-    OVERFLOW = 10001010,
-    EMPTY = 10001011,
-    BRKN = 10001100,
-};
+    list_t* list = (list_t*) calloc (1, sizeof(*list)); 
+    listCtor(list);
+    PushHead(list, 5);
+    PushBack(list, 7);
+    PushHead(list, 5);
+    PushHead(list, 6);   
+    PushHead(list, 3);
+    deleteElem(list, list -> tail);
+    Illustrate(list);
+    listDtor(list);
 
-typedef int element_t;
-
-
-typedef struct elem  elem_t;                           //Insert, pushhead, pushtail, pophead, poptail, showelem,  
-struct elem
-{
-        int canary1;       
-        
-        element_t value;
-        elem_t* next;
-        elem_t* prev;
-
-        int canary2;
-
-};
-
-typedef struct list
-{   
-    int canary1;
-    
-    int size;
-    elem_t* tail;
-    elem_t* head;
-
-    int canary2;
-    
-} list_t;
+}
 
 list_t* listCtor(list_t *s)
 {   
@@ -205,7 +173,7 @@ elem_t* PushBack(list_t* s ,const element_t number)
     return cur;
 }
 
-int deleteElem(elem_t* s)
+elem_t* deleteElem(list_t* t, elem_t* s)
 {
    
     if (s == NULL) 
@@ -214,16 +182,35 @@ int deleteElem(elem_t* s)
         perror("Elem ptr is NULL\n");
         return 0;
         }
+    if (s  == t -> head)
+            {
+                PopHead(t);
+                return t -> head;
+            }
 
+    if (s == t -> tail)
+            {
+                PopBack(t);
+                return t -> tail;
+            }
+
+
+    elem_t* cur = s;
+    cur -> prev -> next = cur -> next;
+    cur -> next -> prev = cur -> prev;
+    
+    (t -> size)--;    
+    
     free(s);
     s = NULL;
 
-    return 1;
+    return cur -> prev;
 }
 
-element_t PopBack(list_t* s)
+elem_t* PopBack(list_t* s)
 {
     listDump(listOK(s), s);
+    elem_t* cur = NULL;
 
     if(s -> size == 0)
             {
@@ -233,7 +220,7 @@ element_t PopBack(list_t* s)
             }
 
     element_t data = s -> tail -> value;
-    elem_t* cur = s -> tail;
+    cur = s -> tail;
     
     (s -> size)--;    
 
@@ -241,6 +228,7 @@ element_t PopBack(list_t* s)
             {
                 s -> head = NULL;
                 s -> tail = NULL;
+                return NULL;
             }
 
     if(s -> size > 0)
@@ -248,19 +236,16 @@ element_t PopBack(list_t* s)
                 
                 s -> tail = s -> tail -> prev;
                 s -> tail -> next = NULL;
+                return s -> tail;
             }
-
-    
-
-    deleteElem(cur);
     
     listDump(listOK(s), s);
 
-    return data;
+    return deleteElem(s,cur);
 
 }
 
-element_t PopHead(list_t* s)
+elem_t* PopHead(list_t* s)
 {   
     listDump(listOK(s), s);
     printf(" pop sosatb\n");
@@ -282,6 +267,7 @@ element_t PopHead(list_t* s)
         {
             s -> head = NULL;
             s -> tail = NULL;
+            return NULL;
         }
 
     if(s -> size > 0)
@@ -289,13 +275,12 @@ element_t PopHead(list_t* s)
             
             s -> head = s -> head -> next;
             s -> head -> prev = NULL;
+            return s -> head;
         }
 
-    deleteElem(cur);
+    return deleteElem(s,cur);
     
-    listDump(listOK(s), s);
     
-    return data;
 }
 
 elem_t* listInsert(list_t *s, elem_t* p, element_t value)
@@ -315,7 +300,10 @@ elem_t* listInsert(list_t *s, elem_t* p, element_t value)
         {
             PushBack(s, value);
         }
-    
+    if (p == s -> head)
+        {
+            PushHead(s, value);
+        }
 
     else 
         {
@@ -360,11 +348,13 @@ int listDtor(list_t *s)
 
     s -> canary1 = POISON;
     s -> canary2 = POISON;
-   
+    printf("canaries = %d\n", s -> canary1);
     s -> size = -1;
-    
-    //free(s); !!!!!!!!!
+    printf("pointer %p\n", s);
+       
+    free(s); //!!!!!!!!!
     s = NULL;
+    //printf("canaries = %d\n", s -> canary1);
     return 1;
     
 }
@@ -424,30 +414,36 @@ void Illustrate(list_t *s)
      listDump(listOK(s), s);
                                         
 }   
-
-int main()
+element_t* listShow(list_t *s)
 {
-    list_t list = {0};
-    listCtor(&list);
-    PushHead(&list, 5);
-    PushBack(&list, 7);
-    PushHead(&list, 5);
-    PopHead(&list);
-    PopBack(&list);
-    PopHead(&list);//segfault
-    PushHead(&list, 6);
+    listDump(listOK(s), s);
     
-    PushHead(&list, 3);
+    int i = 0;
+    elem_t* cur = NULL;
     
-    /*printf("popped = %d\n", PopBack(&list));
-    printf("popped = %d\n", PopHead(&list));*/
-    printf("size = %d\n", list.size);
-    printf("done\n");
-    printf("adress = %p\n", &list);
+    if(s -> size == 0)
+        {
+            errno = EMPTY;
+            perror("List is empty\n");
+            return NULL;
+        }
+    element_t* buffer = (element_t*) calloc(s -> size + 1, sizeof(*buffer));
     
-    Erase(&list);
-    Illustrate(&list);
-    printf("size = %d\n", list.size);
-    listDtor(&list);
+    for (cur = s -> head; cur != NULL; cur = cur -> next)
+        {
+            buffer[i++] = cur -> value;
+            
+        }
 
+    listDump(listOK(s), s);
+    
+    return buffer;
 }
+
+
+
+
+
+
+
+
