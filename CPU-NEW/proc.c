@@ -42,11 +42,13 @@ int Compiler(char* code, const int size, CPU_t* s)
     int command = 0;
     double value = 0;
     printf("size == %d\n", size);
-    while(index <= size)
+    while(code[index] != CMD_END)
     {   
         value = 0;
         command = 0;
         memcpy(&command, (code + index), sizeof(char));
+        printf("cur code %c\n", code[index]);
+        printf("cur index %d\n", index);
         switch (command)
             {
                 
@@ -72,9 +74,9 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     index++;
                                     break; 
                                 }
-                 case CMD_END: {                                                           
-                                    index++;
-                                    return 1;
+                 case CMD_END: {                                                   
+                                  
+                                    abort();
                                     break; 
                                 }
                 
@@ -150,6 +152,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 {
                                    index++;
                                    printf(" out == %lg \n", stackPop(&(s -> stack)));
+                                   break;
                                 }
                 case CMD_REG_R_PUSH:
                                 {
@@ -266,12 +269,15 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 {
                                     index++;
                                     double a = stackPop(&(s -> stack));
+                                    
                                     double b = stackPop(&(s -> stack));
+                                    printf(" a = %lf b = %lg\n", a, b);
                                     if (a > b)
                                     {
                                         index = code[index];
                                         index++;
                                     }
+                                    printf("%s\n", code + index);
                                     
                                     break;
                                }
@@ -280,11 +286,15 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     index++;
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
+                                    printf(" a = %lf b = %lg\n", a, b);
+                                    printf("%s\n", code + index);
                                     if (a < b)
                                     {
                                         index = code[index];
                                         index++;
                                     }
+                                    else index++;
+                                     
                                     
                                     break;
                                }
@@ -298,6 +308,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index = code[index];
                                         index++;
                                     }
+                                    else index = index + 2;
                                     
                                     break;
                                }
@@ -311,6 +322,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index = code[index];
                                         index++;
                                     }
+                                    else index++;
                                     
                                     break;
                                }
@@ -324,6 +336,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index = code[index];
                                         index++;
                                     }
+                                    else index++;
                                     
                                     break;
                                }
@@ -337,6 +350,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index = code[index];
                                         index++;
                                     }
+                                    else index++;
                                     
                                     break;
                                }

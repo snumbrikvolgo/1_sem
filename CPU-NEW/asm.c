@@ -54,27 +54,27 @@ int read_code()
     char* code = (char*)calloc(file_size + 1, sizeof(*code));
     int ptr = 0;
     int index = 0;
-
+    int cycle = 0;
     label_t labels = {0};
+    
 
    int quantity = 0;
     while(quantity < 2)
-       {      
+       {    
+             printf("hui");
             while(*(buffer + ptr) != '\0')
         {
-            
-            
             if (*(buffer + ptr) == ':')
                 {   
                     ptr++;
                     int counter = 0; 
                     sscanf((buffer + ptr), "%s%n", labels.names[labels.size].label_name, &counter);
                     labels.names[labels.size].label_address = index;
-                    printf("index ======== %d\n", index);
                     ptr += counter;
                     (labels.size)++;
                 }  
-                                        
+                           
+            
             #define CMD(name, num) \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
@@ -126,54 +126,55 @@ int read_code()
                 index += sizeof(double);                                \
                 ptr += counter;                                         \
             }
-
+       
            #define CMD_JMP(name, num) \
                if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
                 ptr += strlen(#name)*sizeof(char);\
                 code[index++] = num;\
-                printf("%zd\n", strlen(#name));\
                 while (isspace(*(buffer + ptr)))\
                     {\
                        ptr++;\
                     }\
-                int cycle = 0;\
                 int numeros = 0;\
                 char nombre[MAX_LABEL_NAME] = {};\
-                printf("yyyymyaaa    %s\n", nombre);\
                 sscanf(buffer + ptr, "%s%n", nombre, &numeros);\
                 for (cycle = 0; cycle < labels.size; cycle++)\
                     {\
-                        printf(" laabeeelsls %s\n",  labels.names[cycle].label_name);\
                         if (strncmp(labels.names[cycle].label_name, nombre, numeros) == 0)\
                             {\
                                 memcpy(code + index++, &labels.names[cycle].label_address, sizeof(char));\
                             }\
                         else {\
                                 int tmp = -1;\
-                                memcpy(code + index++, &tmp, sizeof(char));\
+                                memcpy(code + index, &tmp, sizeof(char));\
                               }\
-                        printf("kudaaaaaaaaa %d\n", code[index -1]);\
                     }\
                 ptr += numeros;\
             }
-                
+             
            #include "commands.h"    
            #undef CMD
            #undef CMD_COMPLEX    
            #undef CMD_REG
            #undef CMD_JMP
+                             
 
             while (isspace(*(buffer + ptr)))
                 {
                     ptr++;
                 } 
-           
+             
+                
         }   
             ptr = 0;
             quantity++;
             index = 0;
-        }  
+            cycle = 0;
+            labels.size = 0;
+            printf("name %s, adr %d\n", labels.names[0].label_name, labels.names[0].label_address);
+            printf("name %s, adr %d\n", labels.names[1].label_name, labels.names[1].label_address);
+        }
     fwrite(code, sizeof(char), file_size, file);
     fclose(file);
     fclose(input);
