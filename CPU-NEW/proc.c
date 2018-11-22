@@ -168,7 +168,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                             
                                             printf("rax = %lg\n", s->regs.rax);
                                             printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rax)));
-                                     
+                                            index++;
                                             break;
                                          }
                                     case '2':
@@ -284,7 +284,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
                                     printf(" a = %lf b = %lg\n", a, b);
-                                    printf("%s\n", code + index);
+                                    //printf("%s\n", code + index);
                                     if (a < b)
                                     {
                                         index = code[index];
@@ -292,7 +292,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     }
                                    
                                     else index += sizeof(int);
-                                    sleep(1);
+                                    
                                     
                                     break;
                                }
