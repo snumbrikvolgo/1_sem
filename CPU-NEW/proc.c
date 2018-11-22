@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include "stack-s-typedef-canary-izvrashenie.c"
+#include "work_file_strings.h"
 
 #define CMD(name, num) CMD_##name = num,
 #define CMD_COMPLEX(name, num) CMD_COMPLEX_##name = num,
@@ -32,7 +33,8 @@ typedef struct registers
 typedef struct CPU
 {
     stack_t stack;
-    registers_t regs;    
+    registers_t regs;
+    stack_t returns;    
 }   CPU_t;
 
 int CPU_Ctor(CPU_t* s);
@@ -41,7 +43,7 @@ int Compiler(char* code, const int size, CPU_t* s)
     int index = 0;
     int command = 0;
     double value = 0;
-    printf("size == %d\n", size);
+
     while(code[index] != CMD_END)
     {   
         value = 0;
@@ -56,6 +58,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index++;
                                         memcpy(&value, (code + index), sizeof(double));
                                         printf("value == %lg", value);
+                                        sleep(1);
                                         stackPush(&(s -> stack), value);
                                         index += sizeof(double);
                                         
@@ -162,48 +165,38 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     {
                                    case '1':
                                         {
-                                            //stackPush(&(s -> stack), (s -> regs.rax));
-                                            printf("%rax = %lg\n", s->regs.rax);
-                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rax)));
-                                            /*printf("topchik 1 %lg\n", stackTop(&( s -> stack)));  
-                                            stackPop(&(s -> stack));
-                                            printf("topchik 2 %lg\n", stackTop(&( s -> stack)));*/
-                                            index++;
                                             
+                                            printf("rax = %lg\n", s->regs.rax);
+                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rax)));
+                                     
                                             break;
                                          }
                                     case '2':
                                         {
-                                            //stackPush(&(s -> stack), (s -> regs.rax));
-                                            printf("%rbx = %lg\n", s->regs.rbx);
+                                            
+                                            printf("rbx = %lg\n", s->regs.rbx);
                                             printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rbx)));
-                                            /*printf("topchik 1 %lg\n", stackTop(&( s -> stack)));  
-                                            stackPop(&(s -> stack));
-                                            printf("topchik 2 %lg\n", stackTop(&( s -> stack)));*/
+                                           
                                             index++;
                                             
                                             break;
                                          }
                                     case '3':
                                         {
-                                            //stackPush(&(s -> stack), (s -> regs.rax));
-                                            printf("%rcx = %lg\n", s->regs.rcx);
+                                            
+                                            printf("rcx = %lg\n", s->regs.rcx);
                                             printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rcx)));
-                                            /*printf("topchik 1 %lg\n", stackTop(&( s -> stack)));  
-                                            stackPop(&(s -> stack));
-                                            printf("topchik 2 %lg\n", stackTop(&( s -> stack)));*/
+                                            
                                             index++;
                                          
                                             break;
                                          }
                                    case '4':
                                         {
-                                            //stackPush(&(s -> stack), (s -> regs.rax));
-                                            printf("%rdx = %lg\n", s->regs.rdx);
+                                            
+                                            printf("rdx = %lg\n", s->regs.rdx);
                                             printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rdx)));
-                                            /*printf("topchik 1 %lg\n", stackTop(&( s -> stack)));  
-                                            stackPop(&(s -> stack));
-                                            printf("topchik 2 %lg\n", stackTop(&( s -> stack)));*/
+                                            
                                             index++;
                                           
                                             break;
@@ -262,7 +255,8 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 {
                                     index++;
                                     index = code[index];
-                                    index++;
+                                   
+                                    //index++;
                                     break;
                                }
                        case CMD_JMP_JA: 
@@ -275,8 +269,11 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a > b)
                                     {
                                         index = code[index];
-                                        index++;
+                                        //index++;
                                     }
+                                    
+                                    else index += sizeof(int);
+                                   
                                     printf("%s\n", code + index);
                                     
                                     break;
@@ -291,10 +288,11 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a < b)
                                     {
                                         index = code[index];
-                                        index++;
+                                       
                                     }
-                                    else index++;
-                                     
+                                   
+                                    else index += sizeof(int);
+                                    sleep(1);
                                     
                                     break;
                                }
@@ -306,9 +304,9 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a == b)
                                     {
                                         index = code[index];
-                                        index++;
+                                        //index++;
                                     }
-                                    else index = index + 2;
+                                    else index += sizeof(int);
                                     
                                     break;
                                }
@@ -320,9 +318,9 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a >= b)
                                     {
                                         index = code[index];
-                                        index++;
+                                        //index++;
                                     }
-                                    else index++;
+                                    else index += sizeof(int);
                                     
                                     break;
                                }
@@ -334,9 +332,9 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a <= b)
                                     {
                                         index = code[index];
-                                        index++;
+                                        //index++;
                                     }
-                                    else index++;
+                                    else index += sizeof(int);
                                     
                                     break;
                                }
@@ -348,9 +346,9 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     if (a != b)
                                     {
                                         index = code[index];
-                                        index++;
+                                        //index++;
                                     }
-                                    else index++;
+                                    else index += sizeof(int);
                                     
                                     break;
                                }
@@ -360,6 +358,23 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 printf("current number ======================== %lg\n", a);
                                 stackPush(&(s -> stack), a);
                                 break;
+                                }
+                    case CMD_JMP_CALL:
+                                {   
+                                    int adr = 0;
+                                    index++;
+                                    memcpy(&adr, code + index, sizeof(int));
+                                    stackPush(&(s -> returns), (double)adr);
+                                    index = code[index];
+                                    break;
+                                }
+                    case CMD_JMP_RET:
+                                {
+                                    index++;
+                                    index = (int)(stackPop(&(s -> returns)));
+                                    index = code[index];
+                                    break;
+
                                 }
                                     
                      default: {
@@ -377,17 +392,13 @@ int Compiler(char* code, const int size, CPU_t* s)
 int main(int argc, char* argv[])
 {
     CPU_t CPU = {0};
+    CPU_Ctor(&CPU);
 
-    //printf ("%d\n", (&(CPU.stack)) -> canary1);
-    
-    dump(CPU_Ctor(&CPU), (&(CPU.stack)));   //DED NE PRAV!
-    read_code();
     FILE* machine_code = fopen("debug.txt", "r + b");
     assert(machine_code);
    
     int file_size = size_of_file(machine_code);
-    printf("size == %d", file_size);
-    
+        
     char* code = (char*)calloc(file_size + 1, sizeof(*code));
     fread(code, sizeof(char), file_size, machine_code);
 
@@ -398,8 +409,8 @@ int main(int argc, char* argv[])
 
 int CPU_Ctor(CPU_t* s)
 {
-    /*dump((s -> stack) != NULL, (s -> stack));*/
     dump(stackCtor(&(s -> stack)), (&(s -> stack)));
+    dump(stackCtor(&(s -> returns)), (&(s -> returns)));
     s -> regs.rax = 0;
     s -> regs.rbx = 0;
     s -> regs.rcx = 0;

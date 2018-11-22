@@ -26,7 +26,8 @@
     CMD_JMP(JBE, 85)
     CMD_JMP(JNE, 86)
     CMD_JMP(CALL, 87)
-    CMD(CUR, 88)
+    CMD_JMP(RET, 88)
+    CMD(CUR, 89)
 
     //CMD_MEM(PUSHMEM, 74)
    //CMD_MEM(POPMEM, 75)
