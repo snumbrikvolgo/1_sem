@@ -60,9 +60,10 @@ int main()
     {    
              
         while(*(buffer + ptr) != '\0')
-        {
+        {   printf(" %d", index);
             if (*(buffer + ptr) == ':')
             {   
+                 
                 ptr++;
                 int counter = 0;
                 if(quantity == 0) { 
@@ -146,7 +147,7 @@ int main()
                     for (cycle = 0; cycle < labels.size; cycle++)                                                               \
                         {                                                                                                       \
                             if (strncmp(labels.names[cycle].label_name, nombre, numeros) == 0)                                  \
-                                {                                                                                               \
+                                {   printf(" cur adr =    %d\n", labels.names[cycle].label_address);                                                                                         \
                                     memcpy(code + index, &labels.names[cycle].label_address, sizeof(int));                     \
                                     flg = 1;                                                           \
                                     index += sizeof(int);                                                                       \
@@ -180,6 +181,10 @@ int main()
             index = 0;
             cycle = 0;
     }
+    printf("lable name_0%s ad%d", labels.names[0].label_name, labels.names[0].label_address);
+        printf("lable name_1%s ad%d", labels.names[1].label_name, labels.names[1].label_address);
+    printf("lable name_2%s ad%d", labels.names[2].label_name, labels.names[2].label_address);
+    printf("lable name_3%s ad%d", labels.names[3].label_name, labels.names[3].label_address);
     fwrite(code, sizeof(char), file_size, file);
     fclose(file);
     fclose(input);

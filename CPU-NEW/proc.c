@@ -58,7 +58,6 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         index++;
                                         memcpy(&value, (code + index), sizeof(double));
                                         printf("value == %lg", value);
-                                        sleep(1);
                                         stackPush(&(s -> stack), value);
                                         index += sizeof(double);
                                         
@@ -85,7 +84,6 @@ int Compiler(char* code, const int size, CPU_t* s)
                 
                 case CMD_POP: {
                                 index++;
-                                printf("popped = %lg", stackPop(&(s -> stack)));
                                 break;
                               }
                 case CMD_ADD:
@@ -106,8 +104,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     double  a = stackPop(&(s -> stack));
                                     double  b = stackPop(&(s -> stack));
                         
-                                    stackPush(&(s -> stack), b / a
-);
+                                    stackPush(&(s -> stack), b/a);
                                     break;
                                }
                 case CMD_SUB:
@@ -167,7 +164,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         {
                                             
                                             printf("rax = %lg\n", s->regs.rax);
-                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rax)));
+                                            stackPush(&(s -> stack), (s -> regs.rax));
                                             index++;
                                             break;
                                          }
@@ -175,8 +172,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         {
                                             
                                             printf("rbx = %lg\n", s->regs.rbx);
-                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rbx)));
-                                           
+                                            stackPush(&(s -> stack), (s -> regs.rbx));
                                             index++;
                                             
                                             break;
@@ -185,8 +181,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         {
                                             
                                             printf("rcx = %lg\n", s->regs.rcx);
-                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rcx)));
-                                            
+                                            stackPush(&(s -> stack), (s -> regs.rcx));
                                             index++;
                                          
                                             break;
@@ -195,8 +190,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                         {
                                             
                                             printf("rdx = %lg\n", s->regs.rdx);
-                                            printf("zapushili %lg\n", stackPush(&(s -> stack), (s -> regs.rdx)));
-                                            
+                                            stackPush(&(s -> stack), (s -> regs.rdx));
                                             index++;
                                           
                                             break;
@@ -213,33 +207,32 @@ int Compiler(char* code, const int size, CPU_t* s)
                                    {
                                    case '1':
                                         {
-                                            printf("stack top = %lg\n", stackTop(&(s -> stack)));
+
                                             s -> regs.rax = stackPop(&(s -> stack));
-                                            printf("teper v rax = %lg", s -> regs.rax);
                                             index++;
                                             break;
                                          }
                                     case '2':
                                         {
-                                            printf("stack top = %lg\n", stackTop(&(s -> stack)));
+                                            
                                             s -> regs.rbx = stackPop(&(s -> stack));
-                                            printf("teper v rbx = %lg", s -> regs.rbx);
+
                                             index++;
                                             break;
                                          }
                                     case '3':
                                         {
-                                             printf("stack top = %lg\n", stackTop(&(s -> stack)));
+
                                             s -> regs.rcx = stackPop(&(s -> stack));
-                                            printf("teper v rcx = %lg", s -> regs.rcx);
+
                                             index++;
                                             break;
                                          }
                                    case '4':
                                         {
-                                            printf("stack top = %lg\n", stackTop(&(s -> stack)));
+
                                             s -> regs.rdx = stackPop(&(s -> stack));
-                                            printf("teper v rdx = %lg", s -> regs.rdx);
+
                                             index++;
                                             break;
                                          }
@@ -254,7 +247,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                       case CMD_JMP_JMP: 
                                 {
                                     index++;
-                                    index = code[index];
+                                    memcpy(&index, code + index, sizeof(int));
                                    
                                     //index++;
                                     break;
@@ -268,7 +261,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     printf(" a = %lf b = %lg\n", a, b);
                                     if (a > b)
                                     {
-                                        index = code[index];
+                                        memcpy(&index, code + index, sizeof(int));
                                         //index++;
                                     }
                                     
@@ -287,7 +280,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     //printf("%s\n", code + index);
                                     if (a < b)
                                     {
-                                        index = code[index];
+                                        memcpy(&index, code + index, sizeof(int));
                                        
                                     }
                                    
@@ -297,13 +290,15 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     break;
                                }
                        case CMD_JMP_JE: 
-                                {
+                                {   
                                     index++;
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
                                     if (a == b)
-                                    {
-                                        index = code[index];
+                                    {   
+                                        
+                                        memcpy(&index, code + index, sizeof(int));
+                                        
                                         //index++;
                                     }
                                     else index += sizeof(int);
@@ -317,7 +312,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     double b = stackPop(&(s -> stack));
                                     if (a >= b)
                                     {
-                                        index = code[index];
+                                       memcpy(&index, code + index, sizeof(int));
                                         //index++;
                                     }
                                     else index += sizeof(int);
@@ -331,7 +326,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     double b = stackPop(&(s -> stack));
                                     if (a <= b)
                                     {
-                                        index = code[index];
+                                        memcpy(&index, code + index, sizeof(int));
                                         //index++;
                                     }
                                     else index += sizeof(int);
@@ -345,7 +340,7 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     double b = stackPop(&(s -> stack));
                                     if (a != b)
                                     {
-                                        index = code[index];
+                                        memcpy(&index, code + index, sizeof(int));
                                         //index++;
                                     }
                                     else index += sizeof(int);
@@ -365,14 +360,14 @@ int Compiler(char* code, const int size, CPU_t* s)
                                     index++;
                                     memcpy(&adr, code + index, sizeof(int));
                                     stackPush(&(s -> returns), (double)adr);
-                                    index = code[index];
+                                    memcpy(&index, code + index, sizeof(int));
                                     break;
                                 }
                     case CMD_JMP_RET:
                                 {
                                     index++;
                                     index = (int)(stackPop(&(s -> returns)));
-                                    index = code[index];
+                                    memcpy(&index, code + index, sizeof(int));
                                     break;
 
                                 }
