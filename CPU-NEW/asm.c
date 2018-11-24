@@ -61,6 +61,7 @@ int main()
              
         while(*(buffer + ptr) != '\0')
         {   printf(" %d", index);
+            printf(" %s\n", buffer + ptr);
             if (*(buffer + ptr) == ':')
             {   
                  

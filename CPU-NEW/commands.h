@@ -17,16 +17,16 @@
     CMD(TAN, 77)
     CMD(OUT, 78)
     CMD(IN, 79)
-    
+    CMD_JMP(JAE, 84)
+    CMD_JMP(JBE, 85)
+    CMD_JMP(JNE, 86)
     CMD_JMP(JMP, 80)
     CMD_JMP(JA, 81)
     CMD_JMP(JB, 82)
     CMD_JMP(JE, 83)
-    CMD_JMP(JAE, 84)
-    CMD_JMP(JBE, 85)
-    CMD_JMP(JNE, 86)
+  
     CMD_JMP(CALL, 87)
-    CMD_JMP(RET, 88)
+    CMD(RET, 88)
     CMD(CUR, 89)
 
     //CMD_MEM(PUSHMEM, 74)
