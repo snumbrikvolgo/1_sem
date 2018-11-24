@@ -356,18 +356,24 @@ int Compiler(char* code, const int size, CPU_t* s)
                                 }
                     case CMD_JMP_CALL:
                                 {   
-                                    int adr = 0;
-                                    index++;
-                                    memcpy(&adr, code + index, sizeof(int));
+                                    double adr = 0;
+                                    printf("cur index ====== %d", index);
+                                    adr = (double) index;
+                                    printf("adr = %lg", adr);
                                     stackPush(&(s -> returns), (double)adr);
-                                    memcpy(&index, code + index, sizeof(int));
+                                    printf("huiiiii now top is = %lg", stackTop(&(s -> returns)));
+                                    memcpy(&index, code + index + 1, sizeof(int));
+                                    printf("cur index ====== %d", index);
                                     break;
                                 }
-                    case CMD_JMP_RET:
+                    case CMD_RET:
                                 {
-                                    index++;
-                                    index = (int)(stackPop(&(s -> returns)));
-                                    memcpy(&index, code + index, sizeof(int));
+                                    printf(" now top is = %lg", stackTop(&(s -> returns)));
+                                    index = (int) (stackPop(&(s -> returns)));
+                                    index += 1 + sizeof(int);
+                                    
+                                    printf("return ====== %d", index); 
+                                   
                                     break;
 
                                 }
