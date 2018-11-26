@@ -15,10 +15,11 @@
 
 enum asm_commands
 {
-    #define CMD(name, num) CMD_##name = num,
-    #define CMD_COMPLEX(name, num) CMD_COMPLEX_##name = num,
-    #define CMD_REG(name, reg_name, num) CMD_REG_##name = num,
-    #define CMD_JMP(name, num) CMD_JMP_##name = num,
+    #define CMD(name, num, act) CMD_##name = num,
+    #define CMD_COMPLEX(name, num, act) CMD_COMPLEX_##name = num,
+    #define CMD_REG(name, reg_name, num, act) CMD_REG_##name = num,
+    #define CMD_JMP(name, num, act) CMD_JMP_##name = num,
+    #define CMD_RAM(name, place, num, act) CMD_RAM_##name = num,
 
         #include "commands.h"            
 
@@ -26,6 +27,7 @@ enum asm_commands
     #undef CMD
     #undef CMD_COMPLEX
     #undef CMD_JMP
+    #undef CMD_RAM
 };
 
 struct names
@@ -60,8 +62,7 @@ int main()
     {    
              
         while(*(buffer + ptr) != '\0')
-        {   printf(" %d", index);
-            printf(" %s\n", buffer + ptr);
+        {   
             if (*(buffer + ptr) == ':')
             {   
                  
@@ -79,15 +80,35 @@ int main()
             }  
                            
             
-            #define CMD(name, num) \
+            #define CMD(name, num, act) \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
                 printf(#name);\
                 ptr += strlen(#name) * sizeof(char);\
                 code[index++] = num;\
             } 
- 
-           #define CMD_REG(name, reg_name, num)  \
+            #define CMD_RAM(name, place, num, act)\
+            if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
+            {\
+               ptr += strlen(#name) * sizeof(char);\
+                    printf(#name);\
+                code[index++] = num;\
+                while (isspace(*(buffer + ptr)))\
+                {\
+                    ptr++;\
+                }\
+                ptr++;\
+                char* word = 0;\
+                int ip = 0;\
+                int counter = 0;                                        \
+                sscanf(buffer + (ptr), "%[1-9] %n", word, &counter);\
+                ptr += counter;\
+                ip = (int) strtoll(word, NULL, 10);\
+                printf("ip = %d", ip);\
+                memcpy(code + index, &ip, sizeof(int));\
+                index += sizeof(int);\
+            }
+           #define CMD_REG(name, reg_name, num, act)  \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
                 ptr += strlen(#name) * sizeof(char);\
@@ -115,7 +136,7 @@ int main()
                 ptr += 3 * sizeof(char);\
             }
 
-           #define CMD_COMPLEX(name, num)   \
+           #define CMD_COMPLEX(name, num, act)   \
                if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
                 ptr += strlen(#name)*sizeof(char);\
@@ -132,7 +153,7 @@ int main()
                 ptr += counter;                                         \
             }
        
-           #define CMD_JMP(name, num)                                                                                           \
+           #define CMD_JMP(name, num, act)                                                                                           \
                if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0)                                                           \
                 {                                                                                                               \
                     ptr += strlen(#name)*sizeof(char);                                                                          \
