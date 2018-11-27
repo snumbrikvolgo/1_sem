@@ -44,8 +44,8 @@
                                     break;
                                }))
     CMD(END, 71, ({                                                   
-                                  
-                                    abort();
+                                   
+                                    exit(0);
                                     break; 
                                 }))
 

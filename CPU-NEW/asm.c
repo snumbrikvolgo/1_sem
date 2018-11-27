@@ -62,7 +62,8 @@ int main()
     {    
              
         while(*(buffer + ptr) != '\0')
-        {   
+        {   printf("%d\n", index);
+            printf("%s\n", buffer + ptr);
             if (*(buffer + ptr) == ':')
             {   
                  
@@ -83,28 +84,30 @@ int main()
             #define CMD(name, num, act) \
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             { \
-                printf(#name);\
+                printf(#name"\n");\
                 ptr += strlen(#name) * sizeof(char);\
                 code[index++] = num;\
             } 
             #define CMD_RAM(name, place, num, act)\
+            printf("sravnenyr %d\n",strncmp(buffer + (ptr), #name, strlen(#name)));\
             if(strncmp(buffer + (ptr), #name, strlen(#name)) == 0) \
             {\
+               printf("meow\n");\
+                sleep(2);\
                ptr += strlen(#name) * sizeof(char);\
-                    printf(#name);\
+                    printf(#name"\n");\
                 code[index++] = num;\
                 while (isspace(*(buffer + ptr)))\
                 {\
                     ptr++;\
                 }\
                 ptr++;\
-                char* word = 0;\
+                printf("hiu %s\n", buffer+ptr);\
                 int ip = 0;\
-                int counter = 0;                                        \
-                sscanf(buffer + (ptr), "%[1-9] %n", word, &counter);\
-                ptr += counter;\
-                ip = (int) strtoll(word, NULL, 10);\
+                int counter = 0;    \
                 printf("ip = %d", ip);\
+                sscanf(buffer + ptr, "%d", &ip);\
+                ptr += counter;\
                 memcpy(code + index, &ip, sizeof(int));\
                 index += sizeof(int);\
             }
