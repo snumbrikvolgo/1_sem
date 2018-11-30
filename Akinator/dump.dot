@@ -4,10 +4,40 @@ rankdir=TB
 		node [ shape = "box", color = "black" ]
 		edge [ color = "black" ]
 
-	size [ label ="size = 2" ]
+	size [ label ="size = 7" ]
 
 subgraph clust_1{
 randir = HR;
-	elem_1 [ shape = "record", label = "{ <pointer> 1\n0x55e9e23a6690|  { value = A\n  | <parent> parent\n(nil) } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+	elem_1 [ shape = "record", label = "{ <pointer> 1\n0x55f505d45af0|  { value = ono zhivoe?\n  | <parent> parent\n(nil) } | { <left> left\n0x55f505d45b40 | <right> right\n0x55f505d45b90 } }"]}
 
+subgraph clust_2{
+randir = HR;
+	elem_2 [ shape = "record", label = "{ <pointer> 2\n0x55f505d45b40|  { value = anime\n  | <parent> parent\n0x55f505d45af0 } | { <left> left\n0x55f505d46030 | <right> right\n0x55f505d46060 } }"]}
+
+		elem_1:<left> -> elem_2
+subgraph clust_3{
+randir = HR;
+	elem_3 [ shape = "record", label = "{ <pointer> 3\n0x55f505d46030|  { value = jojo\n  | <parent> parent\n0x55f505d45b40 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_2:<left> -> elem_3
+subgraph clust_4{
+randir = HR;
+	elem_4 [ shape = "record", label = "{ <pointer> 4\n0x55f505d46060|  { value = pl\n  | <parent> parent\n0x55f505d45b40 } | { <left> left\n0x55f505d460d0 | <right> right\n0x55f505d46100 } }"]}
+
+		elem_2:<right> -> elem_4
+subgraph clust_5{
+randir = HR;
+	elem_5 [ shape = "record", label = "{ <pointer> 5\n0x55f505d460d0|  { value = f\n  | <parent> parent\n0x55f505d46060 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_4:<left> -> elem_5
+subgraph clust_6{
+randir = HR;
+	elem_6 [ shape = "record", label = "{ <pointer> 6\n0x55f505d46100|  { value = lozhka\n  | <parent> parent\n0x55f505d46060 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_4:<right> -> elem_6
+subgraph clust_7{
+randir = HR;
+	elem_7 [ shape = "record", label = "{ <pointer> 7\n0x55f505d45b90|  { value = roach\n  | <parent> parent\n0x55f505d45af0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_1:<right> -> elem_7
 }
