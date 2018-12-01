@@ -70,6 +70,8 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
                 }
         case 3: {
                   WriteBase(s -> root, out);
+                  printf("Saved\n");
+                  StartAkina(s, file, out);
                   break;
                 }
         case 4: {
@@ -77,6 +79,7 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
                   char name[MAX_NAME] = {};
                   scanf("%s", name);
                   SearchChar(s, name);
+                  StartAkina(s, file, out);
                   break;
                 }
         case 5: {
@@ -91,13 +94,10 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
 void WriteBase(node_t* node, FILE* file)
 {
   assert(file);
-  printf("hohohohoho\n");
-  int a = fprintf(file, "{\n");
-  printf("%d", a);
+  fprintf(file, "{\n");
+  fprintf(file, "%s\n", node -> elem);
   if (node -> left != NULL)
   WriteBase(node -> left, file);
-  printf("%s\n", node -> elem);
-  fprintf(file, "%s\n", node -> elem);
   if (node -> right != NULL)
   WriteBase(node -> right, file);
 
@@ -122,7 +122,7 @@ elem_t* Question(tree_t* s, node_t* node)
             {
 
                 case 'y':  {
-                            printf("Ty lokh\n");
+                            printf("Ty lokh\n\n");
                             return NULL;
                          }
                 case 'n': {
@@ -139,7 +139,7 @@ elem_t* Question(tree_t* s, node_t* node)
 
          }
 
-        printf("Vash personazh %s?\n", (node -> elem));
+        printf("%s?\n", (node -> elem));
         printf("[y] YES - [n] NO\n");
 
         getchar();
@@ -179,8 +179,8 @@ void NewChar(tree_t* s, node_t* node)
     char* previous = node -> elem;
     node -> elem = pregunta;
 
-    nodePush(s, node, LEFT, person);
-    nodePush(s, node, RIGHT, previous);
+    nodePush(s, node, LEFT, previous);
+    nodePush(s, node, RIGHT, person);
     printf("Ladno, pidor\n");
 }
 
@@ -196,7 +196,7 @@ char* ReadBase(tree_t* s, FILE * file)
  }
 
 node_t* NodeConstr(tree_t* s, char* buffer, int* i)
-{   printf("nachalo %s conec\n", buffer +(*i));
+{
     if (buffer[*i] == '{')
     {
         node_t* node = (node_t*) calloc(1, sizeof(*node));
@@ -213,15 +213,12 @@ node_t* NodeConstr(tree_t* s, char* buffer, int* i)
             node -> left = NodeConstr(s, buffer, i);
             node -> left -> parent = node;
         }
-        printf("sss %s\n", buffer + (*i));
-
 
         if (buffer[*i] == '{')
         {
             node -> right = NodeConstr(s, buffer, i);
             node -> right -> parent = node;
         }
-        printf("sos  %c", *(buffer + (*i)));
         if (buffer[*i] !='}')
         {
             printf("Invalid buffer\n");
@@ -253,37 +250,50 @@ void SearchChar(tree_t* s, char* elem)
   while(cur)
   {
       stackPush(&stack1, cur -> elem);
-      cur = cur -> parent;
+      if (cur -> parent == NULL) break;
+        cur = cur -> parent;
+
   }
 
   cur = s -> root;
-  printf("Eto ");
-  while(stackTop(&stack1))
+
+
+  printf("Eto \n");
+  while(stackTop(&stack1) && cur->left)
   {
+    //printf ("\t%s\n", stackTop(&stack1));
     stackPop(&stack1);
+    stackTop(&stack1);
+
     if (strcmp(cur -> left -> elem, stackTop(&stack1)) == 0)
     {
-      printf(", ne %s", cur -> elem);
+      printf(" ne %s,\n", cur -> elem);
+      if (cur -> left != NULL)
       cur = cur -> left;
+      else break;
     }
     else
     {
-      printf(", %s", cur -> elem);
+      printf(" %s,\n", cur -> elem);
+      if (cur -> right != NULL)
       cur = cur -> right;
+      else break;
     }
   }
   printf(".\n");
 }
 
 node_t* ElemSearch(node_t* s, elem_t string)
-{
+{ printf("...\n");
   if (strcmp(s -> elem, string) == 0)
   {
+        printf("nashel\n");
     return s;
   }
-  node_t* cur = NULL;
-  cur = ElemSearch(s -> left, string);
-  if(!cur) cur = ElemSearch(s -> right, string);
+  node_t* cur = 0;//(node_t*) calloc (1, sizeof(*cur));
+  if (s -> left)
+    cur = ElemSearch(s -> left, string);
+  if (!cur && s->right) cur = ElemSearch(s -> right, string);
 
-  return s;
+  return cur;
 }
