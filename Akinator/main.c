@@ -19,14 +19,18 @@ enum commands
     EXIT = 0,
 };
 
-void WriteBase(node_t* node, FILE* file);
+
+
+int WriteBase(node_t* node, FILE* file);
 elem_t* Question(tree_t* s, node_t* node);
 void NewChar(tree_t* s, node_t* node);
 char* ReadBase(tree_t* s, FILE * file);
 node_t* ElemSearch(node_t* s, elem_t string);
-void SearchChar(tree_t* s, char* elem);
+int SearchChar(tree_t* s, char* elem);
 void StartAkina(tree_t* s, FILE* file, FILE* out);
 node_t* NodeConstr(tree_t* s, char* buffer, int* i);
+void CompareChar(tree_t* s);
+
 
 int main()
 {
@@ -46,32 +50,35 @@ int main()
 
 void StartAkina(tree_t* s, FILE* file, FILE* out)
 {
-    printf("Privet, GAYmer, go igratb\n");
-    printf("Press [1] to START\n");
-    printf("Press [2] to SHOW BASE\n");
-    printf("Press [3] to SAVE\n");
-    printf("Press [4] to TELL\n");
-    printf("Press [5] to COMP\n");
-    printf("Press [0] to EXIT\n");
-    int answ = 0;
 
-    scanf("%d", &answ);
-    switch(answ)
+    while (1)
     {
+      printf("Privet, GAYmer, go igratb\n");
+      printf("Press [1] to START\n");
+      printf("Press [2] to SHOW BASE\n");
+      printf("Press [3] to SAVE\n");
+      printf("Press [4] to TELL\n");
+      printf("Press [5] to COMP\n");
+      printf("Press [0] to EXIT\n");
+      int answ = 0;
+
+      scanf("%d", &answ);
+      switch(answ)
+      {
         case 1: {
                   Question(s ,s -> root);
-                  StartAkina(s, file, out);
+                  //StartAkina(s, file, out);
                   break;
                 }
         case 2: {
                   treeShow(s);
-                  StartAkina(s, file, out);
+                  //StartAkina(s, file, out);
                   break;
                 }
         case 3: {
-                  WriteBase(s -> root, out);
+                  int res = WriteBase(s -> root, out);
+                  if (res == 1)
                   printf("Saved\n");
-                  StartAkina(s, file, out);
                   break;
                 }
         case 4: {
@@ -79,19 +86,22 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
                   char name[MAX_NAME] = {};
                   scanf("%s", name);
                   SearchChar(s, name);
-                  StartAkina(s, file, out);
+                  //StartAkina(s, file, out);
                   break;
                 }
         case 5: {
+                  CompareChar(s);
                   break;
                 }
         case 0: {
+                  return;
                   break;
                 }
+      }
     }
 
 }
-void WriteBase(node_t* node, FILE* file)
+int WriteBase(node_t* node, FILE* file)
 {
   assert(file);
   fprintf(file, "{\n");
@@ -102,7 +112,16 @@ void WriteBase(node_t* node, FILE* file)
   WriteBase(node -> right, file);
 
   fprintf(file, "}\n");
-  assert(file);
+    if(file)
+    {
+      return 1;
+    }
+    else
+    {
+      errno = SAVEERR;
+      fprintf(stderr, "Error while saving file\n");
+      return 0;
+    }
 
 }
 
@@ -116,13 +135,15 @@ elem_t* Question(tree_t* s, node_t* node)
         {
             printf("Eto %s?\n", (node -> elem));
             printf("[y] YES - [n] NO\n");
-            getchar();
+
+              getchar();
             char respond = getchar();
+
             switch (respond)
             {
 
                 case 'y':  {
-                            printf("Ty lokh\n\n");
+                            printf("Tebe menya ne POBEDITB\n\n");
                             return NULL;
                          }
                 case 'n': {
@@ -134,8 +155,8 @@ elem_t* Question(tree_t* s, node_t* node)
                             printf("Unknown command\n");
                             break;
                           }
-            }
 
+            }
 
          }
 
@@ -181,7 +202,8 @@ void NewChar(tree_t* s, node_t* node)
 
     nodePush(s, node, LEFT, previous);
     nodePush(s, node, RIGHT, person);
-    printf("Ladno, pidor\n");
+    printf("Ponyal, prinyal\n");
+    return;
 }
 
 
@@ -237,11 +259,17 @@ node_t* NodeConstr(tree_t* s, char* buffer, int* i)
     }
 }
 
-void SearchChar(tree_t* s, char* elem)
+int SearchChar(tree_t* s, char* elem)
 {
   node_t* cur = ElemSearch(s -> root, elem);
 
-  if (!cur)  return;
+  if (!cur)
+  {
+    errno = NOCHAR;
+    fprintf(stderr, "No such character\n");
+    return 0;
+  }
+
   stack_t stack1 = {};
   stackCtor(&(stack1));
 
@@ -261,7 +289,6 @@ void SearchChar(tree_t* s, char* elem)
   printf("Eto \n");
   while(stackTop(&stack1) && cur->left)
   {
-    //printf ("\t%s\n", stackTop(&stack1));
     stackPop(&stack1);
     stackTop(&stack1);
 
@@ -281,19 +308,118 @@ void SearchChar(tree_t* s, char* elem)
     }
   }
   printf(".\n");
+  stackDtor(&stack1);
+  return 1;
 }
 
 node_t* ElemSearch(node_t* s, elem_t string)
-{ printf("...\n");
+{
   if (strcmp(s -> elem, string) == 0)
   {
-        printf("nashel\n");
     return s;
   }
-  node_t* cur = 0;//(node_t*) calloc (1, sizeof(*cur));
+  node_t* cur = 0;
   if (s -> left)
     cur = ElemSearch(s -> left, string);
   if (!cur && s->right) cur = ElemSearch(s -> right, string);
 
   return cur;
+}
+
+void CompareChar(tree_t* s)
+{
+  printf("Kogo nuzhno sravnit?\n");
+  printf("V ochered:\n");
+
+  char char1[MAX_NAME] = "";
+  scanf("%s", char1);
+  node_t* node1 = ElemSearch(s -> root, char1);
+
+  char char2[MAX_NAME] = "";
+  scanf("%s", char2);
+  node_t* node2 = ElemSearch(s -> root, char2);
+
+  if (strcmp(char1, char2) == 0)
+  {
+    printf("Eto odno i to zhe\n");
+    return;
+  }
+  stack_t stack1 = {};
+  stack_t stack2 = {};
+  stackCtor(&stack1);
+  stackCtor(&stack2);
+  stackPush(&stack1, NULL);
+  stackPush(&stack2, NULL);
+
+  while(node1)
+  {
+      stackPush(&stack1, node1 -> elem);
+      if (node1 -> parent == NULL) break;
+        node1 = node1 -> parent;
+
+  }
+
+  while(node2)
+  {
+      stackPush(&stack2, node2 -> elem);
+      if (node2 -> parent == NULL) break;
+        node2 = node2 -> parent;
+
+  }
+
+  if (node1 -> elem == node2 -> elem)
+  {
+    printf("Pro nih mozhno skazat\n");
+    char* cur1 = 0;
+    char* cur2 = 0;
+
+    cur1 =  stackPop(&stack1);
+    cur2 = stackPop(&stack2);
+
+    while (stackTop(&stack1) == stackTop(&stack2))
+    {
+      node1 -> elem =  stackPop(&stack1);
+      node2 -> elem = stackPop(&stack2);
+        printf("Oni %s\n\n", node1 -> elem);
+    }
+    printf("No pervy\n");
+
+    while(stackTop(&stack1) && node1 ->left)
+    {   char* cur = stackPop(&stack1);
+        if (strcmp(node1 -> left -> left -> elem, cur) == 0)
+      {
+        printf(" ne %s,\n", node1 -> left -> elem);
+        if (node1 -> left != NULL)
+        node1 = node1 -> left;
+
+      }
+      else
+      {
+        printf(" %s,\n", node1 -> elem);
+        if (node1 -> right != NULL)
+        node1 = node1 -> right;
+      }
+    }
+    printf("A vtoroy\n");
+
+    while(stackTop(&stack2) && node2 -> left)
+    {
+          if (strcmp(node2 -> left -> left -> elem, stackTop(&stack2)) == 0)
+        {
+          printf(" ne %s,\n", node2 -> left -> elem);
+          if (node2 -> left != NULL)
+          node2 = node2 -> left;
+
+        }
+        else
+        {
+          printf(" %s,\n", node2 -> elem);
+          if (node2 -> right != NULL)
+          node2 = node2 -> right;
+
+        }
+    }
+  }
+  stackDtor(&stack1);
+  stackDtor(&stack2);
 }

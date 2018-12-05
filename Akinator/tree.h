@@ -3,9 +3,11 @@
 #define MAX_LENGTH 50
 enum error
 {
-    NULLPTR = 10001001,
-    BRKN = 10001100,
-    EMPTY = 10001011,
+    NULLPTR               = 10001001,
+    BRKN                  = 10001100,
+    EMPTY                 = 10001011,
+    SAVEERR               = 10001100,
+    NOCHAR                = 10001101,
 
 };
 enum side
