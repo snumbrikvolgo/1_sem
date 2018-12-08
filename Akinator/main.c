@@ -53,7 +53,7 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
 
     while (1)
     {
-      printf("Privet, GAYmer, go igratb\n");
+      printf("Privet, go igratb\n");
       printf("Press [1] to START\n");
       printf("Press [2] to SHOW BASE\n");
       printf("Press [3] to SAVE\n");
@@ -67,12 +67,10 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
       {
         case 1: {
                   Question(s ,s -> root);
-                  //StartAkina(s, file, out);
                   break;
                 }
         case 2: {
                   treeShow(s);
-                  //StartAkina(s, file, out);
                   break;
                 }
         case 3: {
@@ -86,7 +84,6 @@ void StartAkina(tree_t* s, FILE* file, FILE* out)
                   char name[MAX_NAME] = {};
                   scanf("%s", name);
                   SearchChar(s, name);
-                  //StartAkina(s, file, out);
                   break;
                 }
         case 5: {
@@ -136,9 +133,13 @@ elem_t* Question(tree_t* s, node_t* node)
             printf("Eto %s?\n", (node -> elem));
             printf("[y] YES - [n] NO\n");
 
+            char respond = 0;
+            scanf("%*[^yn]");
+            scanf("%c", &respond);
+/*
               getchar();
             char respond = getchar();
-
+*/
             switch (respond)
             {
 
@@ -326,6 +327,8 @@ node_t* ElemSearch(node_t* s, elem_t string)
   return cur;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 void CompareChar(tree_t* s)
 {
   printf("Kogo nuzhno sravnit?\n");
@@ -353,35 +356,107 @@ void CompareChar(tree_t* s)
 
   while(node1)
   {
-      stackPush(&stack1, node1 -> elem);
+      stackPush(&stack1, node1);
       if (node1 -> parent == NULL) break;
         node1 = node1 -> parent;
 
   }
-
   while(node2)
   {
-      stackPush(&stack2, node2 -> elem);
+      stackPush(&stack2, node2);
       if (node2 -> parent == NULL) break;
         node2 = node2 -> parent;
 
   }
+/*  printf("pop2 -- %s\n", stackPop(&stack2));
+  printf("pop2 -- %s\n", stackPop(&stack2));
+  printf("pop2 -- %s\n", stackPop(&stack2));
+  printf("pop1 -- %s\n", stackPop(&stack1));
+  printf("pop1 -- %s\n", stackPop(&stack1));
+  printf("pop1 -- %s\n", stackPop(&stack1));
+*/
+  stackPop(&stack1);
+  stackPop(&stack2);
 
-  if (node1 -> elem == node2 -> elem)
+  node_t* cur1 = s -> root;
+  node_t* next1 = stackPop(&stack1);
+
+  node_t* cur2 = s -> root;
+  node_t* next2 = stackPop(&stack2);
+
+  printf("Pro nih mozhno skazat\n");
+  while(next1 == next2)
   {
-    printf("Pro nih mozhno skazat\n");
-    char* cur1 = 0;
-    char* cur2 = 0;
+      if(next1 == cur1 -> left)
+          printf("not ");
+      printf("%s ", cur1 -> elem);
 
-    cur1 =  stackPop(&stack1);
-    cur2 = stackPop(&stack2);
+      cur1 = next1;
+      cur2 = next2;
 
-    while (stackTop(&stack1) == stackTop(&stack2))
+      next1 = stackPop(&stack1);
+      next2 = stackPop(&stack2);
+  }
+  printf("\nODNAKO\n%s ", char1);
+
+  while(next1 != NULL) {
+      if(next1 == cur1 -> left)
+          printf("ne ");
+      printf("%s ", cur1 -> elem);
+
+      cur1 = next1;
+      next1 = stackPop(&stack1);
+  }
+  printf("\npoka\n%s ", char2);
+  while(next2 != NULL) {
+      if(next2 == cur2 -> left)
+          printf("ne ");
+      printf("%s ", cur2 -> elem);
+
+      cur2 = next2;
+      next2 = stackPop(&stack2);
+  }
+  printf("\n");
+  /*
+  while (stackTop(&stack1) == stackTop(&stack2) && cur2 -> left && cur1 -> left)
+  //if (node1 -> elem == node2 -> elem)
+  {
+    printf("top 1 = %s\n top 2 = %s\n", stackTop(&stack1), stackTop(&stack2));
+    printf("cur1 %s\n", cur1 -> left -> elem);
+    if (cur1 -> left  -> elem == stackTop(&stack1))
     {
-      node1 -> elem =  stackPop(&stack1);
-      node2 -> elem = stackPop(&stack2);
-        printf("Oni %s\n\n", node1 -> elem);
+      printf("ne %s, \n", cur1 -> elem);
+      if (cur1 -> left != NULL && cur2 -> left != NULL)
+      {
+        cur1 -> left -> elem = stackPop(&stack1);
+        cur2 -> left -> elem = stackPop(&stack2);
+        printf("top 1 = %s\n top 2 = %s\n", stackTop(&stack1), stackTop(&stack2));
+
+        printf("cur 1 after pop %s\n cur2 afterpop %s\n", cur1 -> left -> elem, cur2 -> left-> elem);
+
+        //cur2 -> elem == stackPop(&stack2);
+      }
+
+      else break;
     }
+    else
+    {
+      //stackPop(&stack1);
+      //stackPop(&stack2);
+      printf("%s\n", cur1 -> elem);
+      if (cur1 -> right != NULL && cur2 -> right != NULL)
+      {
+        cur1 == cur1 -> right;
+        cur2 == cur2 -> right;
+      }
+      else break;
+
+    }
+  }
+  */
+//  printf("top2 == %s", stackPop(&stack2));
+
+/*
     printf("No pervy\n");
 
     while(stackTop(&stack1) && node1 ->left)
@@ -419,7 +494,8 @@ void CompareChar(tree_t* s)
 
         }
     }
-  }
+*/
   stackDtor(&stack1);
   stackDtor(&stack2);
 }
+#pragma GCC diagnostic pop
