@@ -39,19 +39,17 @@ int main()
   PushFirst(input, getG(string));
   treeShow(input);
   PrintConsole(input -> root);
-  printf("------------------------\n");
-  printf("------------------------\n");
-  printf("------------------------\n");
   FILE* f = fopen("kekus.tex", "w");
+  printf("%p\n", input -> root);
   PushFirst(output, Derivate(input -> root));
   treeShow(output);
-  PrintConsole(input -> root);
-  printf("------------------------\n");
   PrintConsole(output -> root);
   BeginLatex(f);
   TreeLatex((input) -> root, f);
+  //treeDtor(&input);
   MiddleLatex(f);
   output -> root = SimRemote(output, output -> root);
+  treeShow(output);
   TreeLatex(output -> root, f);
   EndTex(f);
   fclose(f);
@@ -62,7 +60,8 @@ int main()
 node_t* Derivate(node_t* cur)
 {
   node_t* new = (node_t*)calloc(1, sizeof(node_t));
-
+  printf("%p\n", cur);
+  printf("%lg\n", cur -> elem);
   if (cur -> key == NUM)
     new = NUMBER(0);
   else if (cur -> key == VAR)
@@ -105,11 +104,12 @@ node_t* Derivate(node_t* cur)
       }
       case TG:
       {
-        node_t* one = 0;
-        one -> key = NUM;
-        one -> elem = 1;
-        //new = MakeNode(OP, DIV, one, MakeNode(OP, POW, MakeNode(OP, COS, cL, NULL), MakeNode(NUM, 2, NULL, NULL)));
+        printf("%p\n", cur);
+        printf("elem1 %lg elem2 %lg, elem3 %lg", new -> elem, new -> left -> elem, new -> right -> elem);
         new = MULTIP(DIVIS(NUMBER(1), POWER(COSINUS(cL), NUMBER(2))), dL);
+        assert(new);
+        printf("%p\n", new);
+        printf("elem1 %lg elem2 %lg, elem3 %lg", new -> elem, new -> left -> elem, new -> right -> elem);
         break;
       }
       case CTG:
@@ -117,30 +117,24 @@ node_t* Derivate(node_t* cur)
         node_t* one = 0;
         one -> key = NUM;
         one -> elem = 1;
-        //new = MakeNode(OP, DIV, one, MakeNode(OP, POW, MakeNode(OP, COS, cL, NULL), MakeNode(NUM, 2, NULL, NULL)));
         new = MULTIP(DIVIS(NUMBER(-1), POWER(SINUS(cL), NUMBER(2))), dL);
+
 
         break;
       }
       case EXP:
       {
-
-        //new = MakeNode(OP, DIV, one, MakeNode(OP, POW, MakeNode(OP, COS, cL, NULL), MakeNode(NUM, 2, NULL, NULL)));
         new = MULTIP(EPOW(cL), dL);
         break;
       }
 
       case LN:
       {
-
-        //new = MakeNode(OP, DIV, one, MakeNode(OP, POW, MakeNode(OP, COS, cL, NULL), MakeNode(NUM, 2, NULL, NULL)));
         new = MULTIP(DIVIS(NUMBER(1), cL), dL);
         break;
       }
       case LG:
       {
-
-        //new = MakeNode(OP, DIV, one, MakeNode(OP, POW, MakeNode(OP, COS, cL, NULL), MakeNode(NUM, 2, NULL, NULL)));
         new = MULTIP(DIVIS(NUMBER(1), MULTIP(cL, LNE(NUMBER(10)))), dL);
         break;
       }
@@ -181,16 +175,16 @@ node_t* SimRemote(tree_t* tree, node_t* cur)
 {
     if(cur -> elem)
     printf("valueeeeee ====== %lg\n", cur -> elem);
-    if (cur -> left) SimRemote(tree, cur -> left);
-    if (cur -> right) SimRemote(tree, cur -> right);
-    SimNode(tree, cur);
+    if (cur -> left) cur -> left = SimRemote(tree, cur -> left);
+    if (cur -> right) cur -> right = SimRemote(tree, cur -> right);
+    cur = SimNode(tree, cur);
 
     return cur;
 }
 
 node_t* SimNode(tree_t* tree, node_t* cur)
 {
-  printf("cur0 -> elem == %d\n", (int) cur -> elem);
+  printf("cur0 -> elem == %c\n", (int) cur -> elem);
   if (cur -> right)
       printf("cur0 right -> elem == %lg\n", cur -> right -> elem);
   if (cur -> left)
@@ -217,7 +211,7 @@ node_t* SimNode(tree_t* tree, node_t* cur)
 
                  printf("cur2 -> elem == %lg\n", cur -> elem);
               }
-              else if(ISZERO(cur -> left)) /////proverka na klushi
+              else if(ISZERO(cur -> left))
               {
                 cur -> elem = cur -> right -> elem;
                 cur -> key = cur->right->key;
@@ -278,39 +272,37 @@ node_t* SimNode(tree_t* tree, node_t* cur)
         }
           break;
       }
-      case MUL:
+        case MUL:
       {
         if(ISZERO(cur -> left) || ISZERO(cur -> right))
         {
           cur -> elem = 0;
-          NodeDtor(tree, cur -> left);
-          NodeDtor(tree, cur -> right);
+          //NodeDtor(tree, cur -> left);
+          //NodeDtor(tree, cur -> right);
           cur -> key = NUM;
         }
-        else if(ISONE(cur -> left))
+         if(ISONE(cur -> left))
         {
-          node_t* node = cur;
-          cur -> right -> parent = cur -> parent;
+          node_t* new = 0;
+          new = CopyNode(cur -> right);
+          printf("key = %d, elem %lg\n", new -> key, new -> elem);
+          printf("key = %d, elem %lg\n", cur -> key, cur -> elem);
           NodeDtor(tree, cur -> left);
-          cur -> key = cur -> right -> key;
-          if (cur -> parent && cur -> parent -> right == cur) cur -> parent -> right = cur -> right;
-          if (cur -> parent && cur -> parent -> left == cur) cur -> parent -> left = cur -> right;
-          cur  = cur -> right;
+          NodeDtor(tree, cur -> right);
+          cur = new;
 
         }
         else  if(ISONE(cur -> right))
         {
-          node_t* node = cur;
-          cur -> left -> parent = cur -> parent;
-          printf("ATTENTION\n");
+          node_t* new = 0;
+          new = CopyNode(cur -> left);
+          printf("key = %d, elem %lg\n", new -> key, new -> elem);
+          printf("key = %d, elem %lg\n", cur -> key, cur -> elem);
+          NodeDtor(tree, cur -> left);
           NodeDtor(tree, cur -> right);
-          cur -> key = cur -> left -> key;
-          if (cur -> parent && cur -> parent -> right == cur) cur -> parent -> right = cur -> left;
-          if (cur -> parent && cur -> parent -> left == cur) cur -> parent -> left = cur -> left;
-          cur  = cur -> left;
-
+          cur = new;
         }
-        else if (ISNUM(cur -> left) && ISVAR(cur -> right))
+      /*  else if (ISNUM(cur -> left) && ISVAR(cur -> right))
         {
           cur -> elem = cur -> left -> elem;
           NodeDtor(tree, cur -> left);
@@ -325,7 +317,7 @@ node_t* SimNode(tree_t* tree, node_t* cur)
           NodeDtor(tree, cur -> right);
           cur -> key = NUM;
 
-        }
+        }*/
         else if (ISNUM(cur -> left) && ISNUM (cur -> right))
         {
         cur -> elem = cur -> left -> elem * cur ->right -> elem;
@@ -366,7 +358,7 @@ node_t* SimNode(tree_t* tree, node_t* cur)
         }
         break;
       }
-      case POW:
+      /*case POW:
       {
         if (ISZERO(cur -> left))
         {
@@ -384,7 +376,7 @@ node_t* SimNode(tree_t* tree, node_t* cur)
           cur -> key = NUM;
         }
         break;
-      }
+      }*/
   }
   return cur;
 }
@@ -423,7 +415,6 @@ double getN()
   double val = 0;
   double point = 0;
   int rate = 0;
-  printf("govno\n");
   skipSpaces();
   while('0' <= *s && *s <= '9')
   {
@@ -432,7 +423,6 @@ double getN()
   }
   if (*s == '.')
   {
-    printf("tochka\n\n");
     s++;
     while('0' <= *s && *s <= '9')
     {

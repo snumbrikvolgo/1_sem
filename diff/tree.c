@@ -405,8 +405,8 @@ void PushRoot(tree_t* s, const int key, const elem_t value)
 }
 node_t* CopyNode(const node_t* node)
 {
-  node_t* new = (node_t*) calloc(1, sizeof(new));
-  new = node;
+  node_t* new = (node_t*) calloc(1, sizeof(node_t));
+  //new = node;
   new -> key = node -> key;
   new -> elem = node -> elem;
 
@@ -657,12 +657,6 @@ void TreeLatex(node_t* node, FILE *file)
       SINGLETEX(LG, "\\lg")
 
   }
-//  if (node -> key == NUM)
-//  fprintf(file, "\tNUMBERRRRRRRRRRRRRRRRRRRRRR[ shape = \"record\", label = \"{ <pointer> \\n%p|"
-        //   "  { value = %lg\\n ", node , (node -> elem));
-//  if (node -> key == VAR)
-//  fprintf(file, "VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR\telem_ [ shape = \"record\", label = \"{ <pointer> \\n%p|"
-  //        "  { value = X\\n ", node);
 
     if (node -> key == NUM) {
       printf("CHISLOOOOOO %lg\n", node-> elem);
@@ -672,125 +666,10 @@ void TreeLatex(node_t* node, FILE *file)
     if (node -> key == VAR){
         printf("PEREMENNAYA\n");
         printf("ukazatel na jodu preremennaya %p\n", node);
-        fprintf(file, "(x)");
+        fprintf(file, "x");
     }
 
 
   fflush(file);
 
 }
-  /*
-  TreeLatex(node -> left, file);
-  if (node -> key != OP)
-  {
-    if (node -> key == NUM)
-      fprintf(file, "%lg", node -> elem);
-    else
-      fprintf(file, "x");
-  }
-  if (node -> key == OP)
-  {
-    switch ((int) node -> elem)
-    {
-      case ADD:
-        {
-          printf("SUSSSSSSSSS");
-          TreeLatex(node -> left);
-          fprintf(file, " + ");
-          TreeLatex(node -> right);
-          break;
-        }
-      case SUB:
-      {
-        TreeLatex(node -> left);
-        fprintf(file, " - ");
-        TreeLatex(node -> right);
-        break;
-      }
-      case SIN:
-      {
-        fprintf(file, "\\sin");
-        TreeLatex(node -> left);
-        break;
-      }
-      case COS:
-      {
-        fprintf(file, "\\cos");
-        TreeLatex(node -> left);
-        break;
-      }
-      case TG:
-      {
-        fprintf(file, "\\tg");
-        TreeLatex(node -> left);
-        break;
-      }
-      case CTG:
-      {
-        fprintf(file, "\\ctg");
-        TreeLatex(node -> left);
-        break;
-      }
-      case LN:
-      {
-        fprintf(file, "\\ln");
-        TreeLatex(node -> left);
-        break;
-      }
-      case LG:
-      {
-        fprintf(file, "\\lg");
-        TreeLatex(node -> left);
-        break;
-      }
-      case LOG:
-      {
-        fprintf(file, "\\log");
-        fprintf(file, "_{");
-        if (!ISNUM(node -> right) || !ISVAR(node -> right))
-        fprintf(file, "(");
-        TreeLatex(node -> right);
-        if (!ISNUM(node->right) || !ISVAR(node->right))
-        fprintf(file, ")");
-        fprintf (file, " }{ ");
-        fprintf(file, "(");
-        TreeLatex(node -> left);
-        fprintf(file, ")");
-        fprintf(file, "}");
-        break;
-      }
-      case EXP:
-      {
-        fprintf(file, "e^{");
-        TreeLatex(node -> left);
-        fprintf(file, "}");
-        break;
-      }
-    }
-  }
-  TreeLatex(node -> right);
-*/
-
-/*int main()
-{
-    tree_t* tree = (tree_t*) calloc (1, sizeof(*tree));
-    treeCtor(tree);
-    printf("size == %d\n", tree -> size);
-
-    nodePush(tree, NULL, LEFT, 65);
-
-    printf(" %p\n", tree -> root);
-    printf("root value = %s\n", tree -> root -> elem);
-    //nodePushRoot(tree, 66);
-    nodePush(tree, tree -> root, LEFT, 75);
-    printf("elem_%d, val = %s\n", tree -> size, tree -> root -> left -> elem);
-    printf(" root ptr %p\n", nodeRoot(tree));
-    nodeDelete(tree, tree -> root -> left);
-    //treeDtor(tree);
-    nodePush(tree, tree -> root, LEFT, 66);
-    nodePush(tree, tree -> root, RIGHT, 80);
-    nodePush(tree, tree -> root -> right, RIGHT, 79);
-    nodePush(tree, tree -> root -> right, LEFT, 78);
-    treeShow(tree);
-
-}*/
