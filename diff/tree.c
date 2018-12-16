@@ -3,56 +3,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "tree.h"
+#include "diff.h"
 
-enum error
-{
-    NULLPTR = 10001001,
-    BRKN = 10001100,
-    EMPTY = 10001011,
-
-};
-
-typedef double elem_t;
-typedef struct node node_t;
-
-struct node
-{
-    elem_t elem;
-    int type;
-    node_t* parent;
-    node_t* left;
-    node_t* right;
-};
-
-typedef struct tree
-{
-    node_t* root;
-    int size;
-
-} tree_t;
-
-typedef char* elem_t;
-
-typedef struct node node_t;
-
-struct node
-{
-    elem_t elem;
-
-    node_t* parent;
-    node_t* Left;
-    node_t* right;
-};
-
-typedef struct tree
-{
-    node_t* root;
-    int size;
-
-} tree_t;
-
-node_t* nodeCtor(tree_t* s, node_t* parent, elem_t value. int type)
+node_t* nodeCtor(tree_t* s, node_t* parent, elem_t value, int key)
 {
     if (s == NULL)
        {
@@ -69,7 +22,7 @@ node_t* nodeCtor(tree_t* s, node_t* parent, elem_t value. int type)
 
     node_t* node = (node_t*) calloc(1, sizeof(*node));
     node -> elem = value;
-    node -> type = type;
+    node -> key = key;
     node -> parent = parent;
     node -> left = NULL;
     node -> right = NULL;
@@ -119,7 +72,7 @@ int treeDump (int value, tree_t *s)
     return 1;
 }
 
-node_t* nodeDelete(tree_t* s, node_t* parent)
+int nodeDelete(tree_t* s, node_t* parent)
 {
     treeDump(treeOK(s), s);
 
@@ -135,18 +88,18 @@ node_t* nodeDelete(tree_t* s, node_t* parent)
 
     treeDump(treeOK(s), s);
 
-    return parent -> parent;
+    return 1;
 
 }
 
-int treeDtor(tree_t* s)
+int treeDtor(tree_t** s)
 {
-    treeDump(treeOK(s), s);
-    if (s -> size > 0)
-        nodeDelete(s, s -> root);
-    s -> size = 0;
+    treeDump(treeOK(*s), *s);
+    if ((*s) -> size > 0)
+        nodeDelete(*s, (*s) -> root);
+    (*s) -> size = 0;
     free(s);
-    s = NULL;
+    (*s) = NULL;
     return 1;
 }
 
@@ -160,7 +113,7 @@ tree_t* treeCtor(tree_t* s)
     return s;
 
 }
-node_t* nodePushRoot(tree_t* s, elem_t value, int type)
+node_t* nodePushRoot(tree_t* s, elem_t value, int key)
 {
     if (s == NULL)
        {
@@ -177,7 +130,7 @@ node_t* nodePushRoot(tree_t* s, elem_t value, int type)
     {
 
         s -> root = node;
-        s -> root -> type = type;
+        s -> root -> key = key;
         (s -> root) -> elem = value;
         s -> root -> parent = NULL;
         s -> root -> left = NULL;
@@ -193,7 +146,7 @@ node_t* nodePushRoot(tree_t* s, elem_t value, int type)
     node -> right = s -> root -> right;
 
     s -> root = node;
-    s -> root -> type = type;
+    s -> root -> key = key;
     (s -> root) -> elem = value;
     s -> root -> parent = NULL;
 
@@ -203,24 +156,24 @@ node_t* nodePushRoot(tree_t* s, elem_t value, int type)
 }
 node_t* nodeCopy(node_t* s)
 {
-  node_t* new = (node_t*) calloc (), sizeof(*new));
+  node_t* new = (node_t*) calloc (1, sizeof(*new));
   new -> left = s -> left;
   new -> right = s -> right;
   new -> parent = s -> parent;
-  new -> type = s -> type;
+  new -> key = s -> key;
   new -> elem = s -> elem;
 
   return new;
 }
 
-node_t* nodePush(tree_t* s, node_t* parent, int side, elem_t value, int type)
+node_t* nodePush(tree_t* s, node_t* parent, int side, elem_t value, int key)
 {
     treeDump(treeOK(s), s);
     if (s -> size == 0 && parent == NULL)
         {
              node_t* node = (node_t*) calloc(1, sizeof(*node));
              node -> elem = value;
-             node -> type = type;
+             node -> key = key;
              node -> parent = NULL;
              node -> left = NULL;
              node -> right = NULL;
@@ -230,12 +183,12 @@ node_t* nodePush(tree_t* s, node_t* parent, int side, elem_t value, int type)
         }
     if (side == Left)
         {
-            parent -> left = nodeCtor(s, parent, value);
+            parent -> left = nodeCtor(s, parent, value, key);
             return parent -> left;
         }
      if (side == Right)
         {
-            parent -> right = nodeCtor(s, parent, value);
+            parent -> right = nodeCtor(s, parent, value, key);
             return parent -> right;
         }
     treeDump(treeOK(s), s);
@@ -244,7 +197,7 @@ node_t* nodePush(tree_t* s, node_t* parent, int side, elem_t value, int type)
 
 
 
-node_t* nodeValChange(tree_t* s, node_t* node, elem_t value)
+node_t* nodeValChange(tree_t* s, node_t* node, elem_t value, int key)
 {
     treeDump(treeOK(s), s);
 
@@ -311,9 +264,15 @@ void nodeShow(FILE* out, const node_t* cur, const int parent, int* number, int s
 {
     const int number_copy = *number;
     fprintf(out, "subgraph clust_%d{\nrandir = HR;\n", *number);
-
+    if (cur -> key == NUM)
     fprintf(out, "\telem_%d [ shape = \"record\", label = \"{ <pointer> %d\\n%p|"
-             "  { value = %s\\n ", *number, *number, cur, (cur -> elem));
+             "  { value = %lg\\n ", *number, *number, cur, (cur -> elem));
+    if (cur -> key == VAR)
+    fprintf(out, "\telem_%d [ shape = \"record\", label = \"{ <pointer> %d\\n%p|"
+            "  { value = X\\n ", *number, *number, cur);
+    if (cur -> key == OP)
+    fprintf(out, "\telem_%d [ shape = \"record\", label = \"{ <pointer> %d\\n%p|"
+            "  { value = %c\\n ", *number, *number, cur,(int)(cur -> elem));
     fprintf(out, " | <parent> parent\\n%p } | { <left> left\\n%p | <right> right\\n%p } }\"]"
              , cur -> parent , cur -> left, cur -> right);
     fprintf (out, "}\n\n");
@@ -362,7 +321,7 @@ void treeShow(tree_t* s)
 
 void PushLeft(tree_t* s, node_t* node, const int key, const elem_t value)
   {
-    if (list -> size == 0)
+    if (s -> size == 0)
     {
       PushRoot(s, key, value);
       return;
@@ -393,7 +352,7 @@ void PushLeft(tree_t* s, node_t* node, const int key, const elem_t value)
   }
 void PushRight(tree_t* s, node_t* node, const int key, const elem_t value)
 {
-  if (list -> size == 0)
+  if (s -> size == 0)
   {
     PushRoot(s, key, value);
     return;
@@ -424,6 +383,7 @@ void PushRight(tree_t* s, node_t* node, const int key, const elem_t value)
 }
 void PushRoot(tree_t* s, const int key, const elem_t value)
 {
+  node_t* new = (node_t*) calloc(1, sizeof(new));
   if (s -> size != 0)
   {
     new -> elem = value;
@@ -463,6 +423,354 @@ node_t* CopyNode(const node_t* node)
 
   return new;
 }
+void PushFirst(tree_t* s, node_t* root)
+{
+  s -> root = root;
+  s -> size = CountNodes(root);
+
+}
+int CountNodes(node_t* node)
+{
+  if (node == NULL)
+  return 0;
+  return 1 + CountNodes(node -> left) + CountNodes(node -> right);
+}
+void PrintConsole (node_t* s)
+{
+ assert (s);
+    printf("%c", '(');
+    if (s->left)
+    {
+        PrintConsole (s->left);
+    }
+
+    if (s->key == VAR)
+        printf("x");
+    else if (s -> key == NUM)
+        printf("num %lg", s -> elem);
+        else
+        {
+            printf("op %c", (int) s->elem);
+        }
+    if (s->right)
+    {
+        PrintConsole (s->right);
+    }
+    printf("%c", ')');
+
+}
+int NodeDtor(tree_t* tree, node_t* node)
+{ if(node -> parent)
+  {
+  if (node -> parent -> left == node)
+    node -> parent -> left = NULL;
+  else node -> parent -> right = NULL;
+  }
+  if (node -> left) NodeDtor(tree, node -> left);
+  if (node -> right) NodeDtor(tree, node -> right);
+  node -> elem = 0;
+  node -> key = NUM;
+  (tree -> size)--;
+  free(node);
+  return 1;
+
+}
+void Shorten(node_t* node, double side1, double side2)
+{
+	node_t* new = NULL;
+	node_t* re1 = NULL;
+	node_t* re2 = NULL;
+
+	if (side1 == Left)
+	{
+		new = node->left;
+		re1 = node->right;
+	}
+	else if (side1 == Right)
+	{
+		new = node->right;
+		re1 = node->left;
+	}
+
+	if (side2 == Left)
+	{
+		re2 = new->right;
+	}
+	else if (side2 == Right)
+	{
+		re2 = new->left;
+	}
+
+	double val = node-> elem;
+	node-> elem = new-> elem;
+	new-> elem = val;
+
+	if (side1 == Left)
+	{
+		if (side2 == Left)
+		{
+			node->right = re2;
+			re2->parent = node;
+
+			new->right = re1;
+			re1->parent = new;
+		}
+		else
+		{
+			node->right = re2;
+			re2->parent = node;
+
+			new->left = re1;
+			re1->parent = new;
+		}
+	}
+	else
+	{
+		if (side2 == Left)
+		{
+			node->left = re2;
+			re2->parent = node;
+
+			new->right = re1;
+			re1->parent = new;
+		}
+		else
+		{
+			node->left = re2;
+			re2->parent = node;
+
+			new->left = re1;
+			re1->parent = new;
+		}
+	}
+}
+
+
+#define TEXIT(_elem, atm)                                             \
+    if (node -> elem == _elem && node -> key == OP)                   \
+    {                                                                 \
+          assert(node -> left);                                       \
+          assert(node -> right);                                      \
+          if(!(ISLEAF(node -> left))) {                               \
+              fprintf(file, "(");                                     \
+              TreeLatex(node -> left, file);                          \
+              fprintf(file, ")");                                     \
+          } else {                                                    \
+              TreeLatex(node -> left, file);                          \
+          }                                                           \
+                                                                      \
+          fprintf(file, atm);                                         \
+                                                                      \
+          if(!(ISLEAF(node -> right))) {                              \
+              fprintf(file, "(");                                     \
+              TreeLatex(node -> right, file);                         \
+              fprintf(file, ")");                                     \
+          } else                                                      \
+          {                                                           \
+              TreeLatex(node -> right, file);                         \
+          }                                                           \
+          return;                                                     \
+      }
+#define SINGLETEX(_elem, atm)                                         \
+  if (node -> elem == _elem && node -> key == OP)                     \
+  {                                                                   \
+    fprintf(file, atm);                                               \
+    assert(node -> left);                                             \
+    if(!(ISLEAF(node -> left))) {                                     \
+        fprintf(file, "(");                                           \
+        TreeLatex(node -> left, file);                                \
+        fprintf(file, ")");                                           \
+    } else {                                                          \
+        TreeLatex(node -> left, file);                                \
+    }                                                                 \
+    return;                                                           \
+  }
+
+void TreeLatex(node_t* node, FILE *file)
+{
+  //file = stdout;
+  if (node == NULL) return;
+
+  if (node -> key == OP)
+  { //if (node -> key == OP)
+  //fprintf(file, " OPERATOR!!!!!!!!!!!!!!!!!!\t[ shape = \"record\", label = \"{ <pointer> \\n%p|"
+        //  "  { value = %c\\n ", node, X);
+      if (node -> elem == DIV)
+      {
+        fprintf(file, "\\frac{");
+        TreeLatex(node -> left, file);
+        fprintf(file, "}{");
+        TreeLatex(node -> right, file);
+        fprintf(file, "}");
+
+        return;
+      }
+      if (node -> elem == POW)
+      {
+        if (ISLEAF(node -> left)) TreeLatex(node -> left, file);
+        else
+        {
+          fprintf(file, "(");
+          TreeLatex(node -> left, file);
+          fprintf(file, ")");
+        }
+        fprintf(file, "^{");
+        TreeLatex(node -> right, file);
+        fprintf(file, "}");
+
+        return;
+      }
+      if (node -> elem == LOG)
+      {
+        fprintf(file, "\\log");
+        fprintf(file, "_{");
+        if (!ISNUM(node -> right) || !ISVAR(node -> right))
+        fprintf(file, "(");
+        TreeLatex(node -> right, file);
+        if (!ISNUM(node->right) || !ISVAR(node->right))
+        fprintf(file, ")");
+        fprintf (file, " }{ ");
+        fprintf(file, "(");
+        TreeLatex(node -> left, file);
+        fprintf(file, ")");
+        fprintf(file, "}");
+
+        return;
+      }
+      if (node -> elem == EXP)
+      {
+        fprintf(file, "e^{");
+        TreeLatex(node -> left, file);
+        fprintf(file, "}");
+
+        return;
+      }
+
+      TEXIT(MUL, " \\cdot ")
+      TEXIT(ADD, " + ")
+      TEXIT(SUB, " - ")
+      SINGLETEX(SIN, " \\sin")
+      SINGLETEX(COS, "\\cos")
+      SINGLETEX(TG, "\\tan")
+      SINGLETEX(CTG, "\\cot")
+      SINGLETEX(LN, "\\ln")
+      SINGLETEX(LG, "\\lg")
+
+  }
+//  if (node -> key == NUM)
+//  fprintf(file, "\tNUMBERRRRRRRRRRRRRRRRRRRRRR[ shape = \"record\", label = \"{ <pointer> \\n%p|"
+        //   "  { value = %lg\\n ", node , (node -> elem));
+//  if (node -> key == VAR)
+//  fprintf(file, "VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR\telem_ [ shape = \"record\", label = \"{ <pointer> \\n%p|"
+  //        "  { value = X\\n ", node);
+
+    if (node -> key == NUM) {
+      printf("CHISLOOOOOO %lg\n", node-> elem);
+      printf("ukazatel na jodu chislo %p\n", node);
+      fprintf(file, "%lg", node -> elem);
+    }
+    if (node -> key == VAR){
+        printf("PEREMENNAYA\n");
+        printf("ukazatel na jodu preremennaya %p\n", node);
+        fprintf(file, "(x)");
+    }
+
+
+  fflush(file);
+
+}
+  /*
+  TreeLatex(node -> left, file);
+  if (node -> key != OP)
+  {
+    if (node -> key == NUM)
+      fprintf(file, "%lg", node -> elem);
+    else
+      fprintf(file, "x");
+  }
+  if (node -> key == OP)
+  {
+    switch ((int) node -> elem)
+    {
+      case ADD:
+        {
+          printf("SUSSSSSSSSS");
+          TreeLatex(node -> left);
+          fprintf(file, " + ");
+          TreeLatex(node -> right);
+          break;
+        }
+      case SUB:
+      {
+        TreeLatex(node -> left);
+        fprintf(file, " - ");
+        TreeLatex(node -> right);
+        break;
+      }
+      case SIN:
+      {
+        fprintf(file, "\\sin");
+        TreeLatex(node -> left);
+        break;
+      }
+      case COS:
+      {
+        fprintf(file, "\\cos");
+        TreeLatex(node -> left);
+        break;
+      }
+      case TG:
+      {
+        fprintf(file, "\\tg");
+        TreeLatex(node -> left);
+        break;
+      }
+      case CTG:
+      {
+        fprintf(file, "\\ctg");
+        TreeLatex(node -> left);
+        break;
+      }
+      case LN:
+      {
+        fprintf(file, "\\ln");
+        TreeLatex(node -> left);
+        break;
+      }
+      case LG:
+      {
+        fprintf(file, "\\lg");
+        TreeLatex(node -> left);
+        break;
+      }
+      case LOG:
+      {
+        fprintf(file, "\\log");
+        fprintf(file, "_{");
+        if (!ISNUM(node -> right) || !ISVAR(node -> right))
+        fprintf(file, "(");
+        TreeLatex(node -> right);
+        if (!ISNUM(node->right) || !ISVAR(node->right))
+        fprintf(file, ")");
+        fprintf (file, " }{ ");
+        fprintf(file, "(");
+        TreeLatex(node -> left);
+        fprintf(file, ")");
+        fprintf(file, "}");
+        break;
+      }
+      case EXP:
+      {
+        fprintf(file, "e^{");
+        TreeLatex(node -> left);
+        fprintf(file, "}");
+        break;
+      }
+    }
+  }
+  TreeLatex(node -> right);
+*/
+
 /*int main()
 {
     tree_t* tree = (tree_t*) calloc (1, sizeof(*tree));
