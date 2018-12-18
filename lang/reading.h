@@ -1,26 +1,29 @@
-#include <"tree.h"
+#include <errno.h>
 #include <assert.h>
+#include "language.h"
 
 node_t* MakeNode(const int key, const elem_t value, node_t* left, node_t* right);
 node_t* HacerUnoNodo(const int key, const elem_t value);
-int Existe(cons char* name, vars_t var);
+int Existe(const char* name, vars_t var);
+node_t* MakeNode(const int key, const elem_t value, node_t* left, node_t* right);
 
 const char* s = NULL;
 
 double getN();
-char* getVar();
-node_t* getE(vars_t var);
-node_t* getP(vars_t var);
-node_t* getT(vars_t var);
-node_t* getExp(vars_t var);
-node_t* getAsg(vars_t var);
-node_t* getSi(vars_t var);
-node_t* getLupa(vars_t var);
-node_t* getScan(vars_t var);
-node_t* getPrint(vars_t var);
-node_t* getOp(vars_t var);
+char* getV();
+node_t* getE(vars_t vars);
+node_t* getP(vars_t vars);
+node_t* getT(vars_t vars);
+node_t* getExp(vars_t vars);
+node_t* getAsg(vars_t vars);
+node_t* getSi(vars_t vars);
+node_t* getLupa(vars_t vars);
+node_t* getScan(vars_t vars);
+node_t* getPrint(vars_t vars);
+node_t* getOp(vars_t vars);
 node_t* getFunc();
-node_t* getLlame(vars_t var);
+node_t* getLlame(vars_t vars);
+node_t* getDesp(vars_t vars);
 node_t* getG(const char* str);
 void SkipSpaces();
 void skipPunct();
@@ -54,11 +57,12 @@ node_t* getG(const char* str)
           if (!root)
               root = getFunc();
           else
-              root = OPERAT(value, getFunc());
+              root = OPERAT(root, getFunc());
 
           skipSpaces();
         }
-
+    skipSpaces();
+    printf("last %c\n", *s);
     assert(*s == '\0');
     assert(s != str);
 
@@ -68,12 +72,13 @@ node_t* getG(const char* str)
 
 node_t* getFunc()
 {
-  node_t* val = 0;
-  char* name = GetVar();
+  node_t* value = 0;
+  char* name = getV();
+  printf("%s\n", name);
 
   int real = Existe(name, funcions);
 
-  if (real == -1)
+  if (real != -1)
   {
     errno = NOFUNC;
     fprintf(stderr, "Hay no nombre de la funcion\n");
@@ -83,12 +88,12 @@ node_t* getFunc()
   else
   {
     real = funcions.numero;
-    funcions.nombre[funcions.numero++] = nombre;
+    funcions.nombre[funcions.numero++] = name;
   }
 
   skipSpaces();
 
-  var_t vars = {};
+  vars_t vars = {};
 
   if (*(s++) != '[')
   {
@@ -102,23 +107,26 @@ node_t* getFunc()
 
   while(*s != ']')
   {
-    char* var = getVar();
+    char* var = getV();
     exists = Existe(var, vars);
 
-    if (exists == -1)
+    if (exists != -1)
     {
       errno = NOVAR;
       fprintf(stderr, "Hay no nombre de el variable\n");
       exit(0);
     }
-    else vars.nombre[var.numero++] = var;
+    else vars.nombre[vars.numero++] = var;
 
     skipSpaces();
+    printf("current = %c\n", *s);
+    assert(*s == ',' && *(s + 1) != ']' || *s == ']');
     skipPunct();
+    skipSpaces();
   }
 
   skipSpaces();
-  if (*s != ']')
+  if (*(s++) != ']')
   {
     errno =  SYNTERROR;
     fprintf(stderr, "Esperado ']' in %s\n", name);
@@ -130,7 +138,7 @@ node_t* getFunc()
   value = getOp(vars);
 
   if (!strcmp("main", name))
-      return OPERAT(FUNC(var.numero), value);
+      return OPERAT(FUNCT(-vars.numero), value);
   return OPERAT(FUNCT(real), value);
 
 }
@@ -165,11 +173,11 @@ node_t* getOp(vars_t vars)
 
       skipSpaces();
     }
-      s++;
+      s += 2;
   }
   else if (*s == 's' && *(s + 1) == 'i' && !isalpha(*(s + 2)))
   {
-    value = getSi(var);
+    value = getSi(vars);
     if (*s == 'o' && *(s + 1) == 't' && *(s + 2) == 'r' && *(s + 3) == 'o'
         && !isalpha(*(s + 4)))
         {
@@ -217,6 +225,12 @@ node_t* getOp(vars_t vars)
             {
               value = getLlame(vars);
             }
+    else if(*s == 'd' && *(s + 1) == 'e' && *(s + 2) == 's' && *(s + 3) == 'p' &&
+            *(s + 4) == 'a' && *(s + 5) == 'c' && *(s + 6) == 'i' && *(s + 7) == 't' &&
+            *(s + 8) == 'o' && !isalpha(*(s + 9)))
+            {
+              value = getDesp(vars);
+            }
     else if (isalpha(*s))
             {
               value = getAsg(vars);
@@ -242,7 +256,7 @@ node_t* getLlame(vars_t vars)
   }
 
   skipSpaces();
-  if (*s++ != '{')
+  if (*s++ != '[')
   {
     errno = SYNTERROR;
     fprintf(stderr, "Esperado '[' en vocacion %s\n", name);
@@ -253,11 +267,11 @@ node_t* getLlame(vars_t vars)
   node_t* value = 0;
   while (*s != ']')
   {
-    char* var = getVar();
+    char* var = getV();
     exists = Existe(var, vars);
     if (exists == -1)
     {
-      errno = NOFUNC;
+      errno = NOVAR;
       fprintf(stderr, "Hay no nombre de el variable\n");
       exit(0);
     }
@@ -270,13 +284,16 @@ node_t* getLlame(vars_t vars)
         value = VARIABLE(exists);
     }
     skipSpaces();
+    assert(*s == ',' && *(s + 1) != ']' || *s == ']');
+    skipPunct();
+    skipSpaces();
   }
   if (!value -> left && !value -> right)
     value = PARAMET(value, 0);
 
   skipSpaces();
 
-  if (*s != ']')
+  if (*(s++) != ']')
   {
     errno =  SYNTERROR;
     fprintf(stderr, "Esperado ']' en %s\n", name);
@@ -284,7 +301,7 @@ node_t* getLlame(vars_t vars)
   }
 
   skipSpaces();
-
+  printf("%c\n", *s);
   if (*(s++) != ';')
   {
     errno = SYNTERROR;
@@ -296,10 +313,18 @@ node_t* getLlame(vars_t vars)
 
   return MakeNode(OP, LLAME, value, FUNCT(exists));
 }
+node_t* getDesp(vars_t vars)
+{
+  s += 9;
+  CONDICIONAL(despacito)
 
+
+  return DESPAC(value, value2);
+
+}
 node_t* getSi(vars_t vars)
 {
-  s += 5;
+  s += 2;
   CONDICIONAL(si)
 
   return CONDIC(value, value2);
@@ -308,30 +333,29 @@ node_t* getSi(vars_t vars)
 node_t* getLupa(vars_t vars)
 {
   s += 8;
-  CONDICIONAL(mientras);
+  CONDICIONAL(mientras)
   return LUPA(value, value2);
 }
 
 node_t* getScan(vars_t vars)
 {
   s += 3;
-  RECIBE(lee);
+  RECIBE(lee)
 
   return ENTRADA(VARIABLE(num));
-
 }
 
 node_t* getPrint(vars_t vars)
 {
   s += 7;
-  RECIBE(escribe);
+  RECIBE(escribe)
 
   return SALIDA(VARIABLE(num));
 }
 
 node_t* getAsg(vars_t vars)
 {
-  SkipSpaces();
+  skipSpaces();
 
   char* name = getV();
   int real = Existe(name, vars);
@@ -356,7 +380,7 @@ node_t* getAsg(vars_t vars)
 
   skipSpaces();
 
-  node_t* exprecion = getE(var);
+  node_t* exprecion = getE(vars);
 
   skipSpaces();
 
@@ -366,7 +390,7 @@ node_t* getAsg(vars_t vars)
     fprintf(stderr, "No hay fin de terminacion in assgn");
     exit(0);
   }
-  return ASSGN(expression, cur);
+  return ASSGN(exprecion, cur);
 }
 
 node_t* getExp(vars_t vars)
@@ -376,23 +400,23 @@ node_t* getExp(vars_t vars)
   skipSpaces();
 
   if(*s == '>' && *(s + 1) == '=')
-    COMPCMD(>=, EMAS, 2)
-  else if (*s == '<' && *(s + 1) == '=')
-    COMPCMD(<=, EMENOR, 2)
-  else if (*s == '<' && *(s + 1) == '>')
-    COMPCMD(<>, NIGUAL, 2)
-  else if (*s == '=' && *(s + 1) == '=')
-    COMPCMD(==, IGUAL, 2)
+    COMCMD(>=, EMAS, 2)
+  else if(*s == '<' && *(s + 1) == '=')
+    COMCMD(<=, EMENOR, 2)
+  else if(*s == '<' && *(s + 1) == '>')
+    COMCMD(<>, NIGUAL, 2)
+  else if(*s == '=' && *(s + 1) == '=')
+    COMCMD(==, IGUAL, 2)
   else if(*s == '>')
-    COMPCMD(>, MAS, 1)
+    COMCMD(>, MAS, 1)
   else if(*s == '<')
-    COMPCMD(<, MENOR, 1)
+    COMCMD(<, MENOR, 1)
 
   else
     return value;
 }
 
-node_t* getE()
+node_t* getE(vars_t vars)
 {
   skipSpaces();
 
@@ -422,7 +446,7 @@ node_t* getE()
     if (op == '-')
       value =  MINUS(value, val2);
   }
-  return val;
+  return value;
 }
 
 node_t* getT(vars_t vars)
@@ -529,11 +553,11 @@ node_t* getP(vars_t vars)
   }
   else if(*s >= '0' && *s <= '9' || *s == '+' || *s == '-')
   {
-    skipspaces();
+    skipSpaces();
 
     value = NUMBER(getN());
 
-    skipspaces();
+    skipSpaces();
 
   }
   return value;
@@ -572,7 +596,7 @@ double getN()
 
 char* getV()
 {
-  char name[name_size] = 0;
+  char* name = (char*) calloc (NAME_SIZE, sizeof(char));
 
   int length = 0;
   while (isalpha(*s) || isdigit(*s) || *s == '_')
@@ -594,4 +618,20 @@ int Existe(const char* name, vars_t vars)
   }
 
   return -1;
+}
+
+
+node_t* MakeNode(const int key, const elem_t value, node_t* left, node_t* right)
+{
+  node_t* node = (node_t*) calloc (1, sizeof(*node));
+
+  node -> key = key;
+  node -> elem = value;
+
+  node -> left = left;
+  if (left) node -> left -> parent = node;
+  node -> right = right;
+  if (right) node -> right -> parent = node;
+  return node;
+
 }

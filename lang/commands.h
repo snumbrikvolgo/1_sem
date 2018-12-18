@@ -1,163 +1,315 @@
-const int name_size = 50, num_vars = 1000;
-const char* input = "prog.txt";
+    CMD(BEGIN, 64, ({
+                                    index++;
+                                    break;
+                                }))
+    CMD(POP, 65, ({
+                                index++;
+                                break;
+                              }))
+    CMD_COMPLEX(PUSH, 66, ({
+                                        index++;
+                                        memcpy(&value, (code + index), sizeof(double));
+                                        stackPush(&(s -> stack), value);
+                                        index += sizeof(double);
 
-#define NUMBER(number)          MakeNode (NUM,  number, NULL, NULL)
-#define VARIABLE()              MakeNode (VAR,  number, NULL, NULL)
-#define FUNCT(number)           MakeNode (FUNC, number, NULL, NULL)
+                                        break;
+
+                                       }))
+    CMD(MUL, 67, ({
+                                    index++;
+                                    stackPush(&(s -> stack), stackPop(&(s -> stack)) * stackPop(&(s -> stack)));
+                                    break;
+                               }))
+    CMD(DIV, 68, (
+                              {
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    double  b = stackPop(&(s -> stack));
+
+                                    stackPush(&(s -> stack), b/a);
+                                    break;
+                               }))
+    CMD(ADD, 69, ({
+                                    index++;
+                                    stackPush(&(s -> stack), stackPop(&(s -> stack)) + stackPop(&(s -> stack)));
+                                    break;
+                               }))
+    CMD(SUB, 70, (
+                              {
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    double  b = stackPop(&(s -> stack));
+
+                                    stackPush(&(s -> stack), b - a);
+                                    break;
+                               }))
+    CMD(END, 71, ({
+
+                                    exit(0);
+                                    break;
+                                }))
+
+    CMD_REG(R_PUSH, REG_NAME, 72, ({
+
+                                   index++;
+                                   switch(code[index])
+                                    {
+                                   case '1':
+                                        {
+                                            stackPush(&(s -> stack), (s -> regs.rax));
+                                            index++;
+                                            break;
+                                         }
+                                    case '2':
+                                        {
+
+                                            stackPush(&(s -> stack), (s -> regs.rbx));
+                                            index++;
+
+                                            break;
+                                         }
+                                    case '3':
+                                        {
+
+                                            stackPush(&(s -> stack), (s -> regs.rcx));
+                                            index++;
+
+                                            break;
+                                         }
+                                   case '4':
+                                        {
+
+                                            stackPush(&(s -> stack), (s -> regs.rdx));
+                                            index++;
+
+                                            break;
+                                         }
+                                    }
+                                    break;
+                                }))
+    CMD_REG(R_POP, REG_NAME, 73, ({
+                                   index++;
+
+                                   switch(code[index])
+                                   {
+                                   case '1':
+                                        {
+
+                                            s -> regs.rax = stackPop(&(s -> stack));
+                                            index++;
+                                            break;
+                                         }
+                                    case '2':
+                                        {
+                                            s -> regs.rbx = stackPop(&(s -> stack));
+
+                                            index++;
+                                            break;
+                                         }
+                                    case '3':
+                                        {
+
+                                            s -> regs.rcx = stackPop(&(s -> stack));
+
+                                            index++;
+                                            break;
+                                         }
+                                   case '4':
+                                        {
+
+                                            s -> regs.rdx = stackPop(&(s -> stack));
+
+                                            index++;
+                                            break;
+                                         }
+                                    default: {
+                                                printf("No index\n");
+                                                break;
+                                            }
+                                    }
+
+                                break;
+                                }))
 
 
-#define ISNUM(node) node -> key == NUM
-#define ISVAR(node) node -> key == VAR
+    CMD(SQRT, 74, ({
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    a = sqrt(a);
+                                    stackPush(&(s -> stack), a);
+                                    break;
+                               }))
+    CMD(SIN, 75, (
+                              {
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    a = sin(a);
+                                    stackPush(&(s -> stack), a);
+                                    break;
+                               }))
+    CMD(COS, 76, (
+                              {
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    a = cos(a);
+                                    stackPush(&(s -> stack), a);
+                                    break;
+                               }))
+    CMD(TAN, 77, ({
+                                    index++;
+                                    double  a = stackPop(&(s -> stack));
+                                    a = tan(a);
+                                    stackPush(&(s -> stack), a);
+                                    break;
+                               }))
+    CMD(OUT, 78, ({
+                                   index++;
+                                   double popret = stackPop(&(s -> stack));
+                                   printf("out == %lg \n", popret);
+                                   break;
+                                }))
+    CMD(IN, 79, ( {
+                                            index++;
+                                            printf("Enter the number\n");
+                                            double value = 0;
+                                            scanf("%lg", &value);
+                                            stackPush(&(s -> stack), value);
 
-#define      PLUS(left, right) MakeNode (OP, ADD,   left, right)
-#define     MINUS(left, right) MakeNode (OP, SUB,   left, right)
-#define    MULTIP(left, right) MakeNode (OP, MUL,   left, right)
-#define     DIVIS(left, right) MakeNode (OP, DIV,   left, right)
-#define     ASSGN(left, right) MakeNode (OP, ASG,   left, right)
-#define    OPERAT(left, right) MakeNode (OP, OPER,  left, right)
-#define      MAS(left, right)  MakeNode (OP, JA,    left, right)
-#define     MENOR(left, right) MakeNode (OP, JB,    left, right)
-#define      EMAS(left, right) MakeNode (OP, JAE,   left, right)
-#define    EMENOR(left, right) MakeNode (OP, JBE,   left, right)
-#define     IGUAL(left, right) MakeNode (OP, JE,    left, right)
-#define    NIGUAL(left, right) MakeNode (OP, JNE,   left, right)
-#define    CONDIC(left, right) MakeNode (OP, SI,    left, right)
-#define     OTROS(left, right) MakeNode (OP, OTRO,  left, right)
-#define      LUPA(left, right) MakeNode (OP, MIENTRAS, left, right)
-#define   PARAMET(left, right) MakeNode (OP, PARAM, left, right)
-#define     SINUS(current)     MakeNode (OP, SIN,   current, NULL)
-#define   COSINUS(current)     MakeNode (OP, COS,   current, NULL)
-#define   RADICAL(current)     MakeNode (OP, SQRT,  current, NULL)
-#define   ENTRADA(current)     MakeNode (OP, SCAN,  current, NULL)
-#define    SALIDA(current)     MakeNode (OP, PRINT, current, NULL)
+                                            break;
+                                        }))
+    CMD_JMP(JAE, 84, ({
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
+                                    double b = stackPop(&(s -> stack));
+                                    if (a >= b)
+                                    {
+                                       memcpy(&index, code + index, sizeof(int));
+                                    }
+                                    else index += sizeof(int);
 
-typedef struct vars vars_t;
+                                    break;
+                               }))
+    CMD_JMP(JBE, 85, ( {
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
+                                    double b = stackPop(&(s -> stack));
+                                    if (a <= b)
+                                    {
+                                        memcpy(&index, code + index, sizeof(int));
+                                    }
+                                    else index += sizeof(int);
 
-  struct vars
-{
-    char* nombre[num_vars]; //////////////////////////////////////////
-    int numero;
-};
-vars_t funcions;
+                                    break;
+                               }))
+    CMD_JMP(JNE, 86, (  {
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
+                                    double b = stackPop(&(s -> stack));
+                                    if (a != b)
+                                    {
+                                        memcpy(&index, code + index, sizeof(int));
+                                    }
+                                    else index += sizeof(int);
 
-#define COMCMD(name, command, size)                             \
-{                                                               \
-  s += size;                                                    \
-                                                                \
-  skipSpaces();                                                 \
-                                                                \
-  char* ptr = s;                                                \                                                                     \
-  node_t* value2 = getE(vars);                                  \
-                                                                \
-  skipSpaces();                                                 \
-                                                                \
-  assert(s == ptr);                                             \
-  return command(value, value2);                                \
-}
+                                    break;
+                               }))
+    CMD_JMP(JMP, 80, ({
+                                    index++;
+                                    memcpy(&index, code + index, sizeof(int));
 
-#define CONDICIONAL(name)                                       \
-  skipSpaces();                                                 \
-                                                                \
-  if (*(s++) != '(')                                            \
-  {                                                             \
-    errno = SYNTERROR;                                          \
-    fprintf(stderr, "No bracket en " #name);                    \
-    exit(0);                                                    \
-  }                                                             \
-  skipSpaces();                                                 \
-  char* ptr = s;                                                \
-                                                                \
-  node_t* value = getExp(vars);                                 \
-  assert(ptr != s);                                             \
-                                                                \
-  skipSpaces();                                                 \
-                                                                \
-  assert(*s == ')');                                            \
-                                                                \
-  skipSpaces();                                                 \
-                                                                \
-  ptr = s;                                                      \
-                                                                \
-  node_t* value2 = getOp(vars);                                 \
-                                                                \
-  assert(s != ptr);                                             \
-                                                                \
-  skipSpaces();
+                                    break;
+                               }))
+    CMD_JMP(JA, 81, ({
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
 
-#define RECIBE(name)                                            \
-    skipSpaces();                                               \
-    if (*(s++) != '(')                                          \
-    {                                                           \
-      errno = SYNTERROR;                                        \
-      fprintf(stderr, "No '(' en" #name);                       \
-      exit(0);                                                  \
-    }                                                           \
-    skipSpaces();                                               \
-                                                                \
-    if (!isalpha(*s))                                           \
-    {                                                           \
-      errno = SYNTERROR;                                        \
-      fprintf(stderr, "no arg\n");                              \
-      exit(0);                                                  \
-    }                                                           \
-    char* name = getV();                                        \
-    int num = Existe(name, vars);                               \
-                                                                \
-    if (num == -1)                                              \
-    {                                                           \
-      errno = NOVAR;                                            \
-      fprintf(stderr, "Hay no nombre de el variable\n");        \
-      exit(0);                                                  \
-    }                                                           \
-                                                                \
-    skipSpaces();                                               \
-                                                                \
-    if (*(s++) != ')')                                          \
-    {                                                           \
-      errno = SYNTERROR;                                        \
-      fprintf(stderr, "No ')'" #name);                          \
-      exit(0);                                                  \
-    }                                                           \
-    skipSpaces();                                               \
-                                                                \
-    if (*(s++) != ';')                                          \
-    {                                                           \
-      errno = SYNTERROR;                                        \
-      fprintf(stderr, "No hay fin de terminacion");             \
-      exit(0);                                                  \
-    }                                                           \
-    skipSpaces();
+                                    double b = stackPop(&(s -> stack));
+                                    printf(" a = %lf b = %lg\n", a, b);
+                                    if (a > b)
+                                    {
+                                        memcpy(&index, code + index, sizeof(int));
 
-enum types
-{
-    NUM      = 1,
-    VAR      = 2,
-    OP       = 3,
-    FUNC     = 4
-};
+                                    }
 
-enum ops
-{
-      ADD   = 1,
-      SUB   = 2,
-      MUL   = 3,
-      DIV   = 4,
-      SIN   = 5,
-      COS   = 6,
-      SQRT  = 7,
-      OPER  = 8,
-      JA    = 9,
-      JB    = 10,
-      JE    = 11,
-      JNE   = 12,
-      JAE   = 13,
-      JBE   = 14,
-      ASG   = 15,
-      SI    = 16,
-      OTRO  = 17,
-   MIENTRAS = 18,
-      SCAN  = 19,
-      PRINT = 20,
-      LLAME  = 21,
-      PARAM = 22,
-};
+                                    else index += sizeof(int);
+
+
+
+                                    break;
+                               }))
+    CMD_JMP(JB, 82, ( {
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
+                                    double b = stackPop(&(s -> stack));
+                                    printf(" a = %lf b = %lg\n", a, b);
+
+                                    if (a < b)
+                                    {
+                                        memcpy(&index, code + index, sizeof(int));
+
+                                    }
+
+                                    else index += sizeof(int);
+
+
+                                    break;
+                               }))
+    CMD_JMP(JE, 83, ({
+                                    index++;
+                                    double a = stackPop(&(s -> stack));
+                                    double b = stackPop(&(s -> stack));
+                                    if (a == b)
+                                    {
+
+                                        memcpy(&index, code + index, sizeof(int));
+
+                                    }
+                                    else index += sizeof(int);
+
+                                    break;
+                               }))
+    CMD_JMP(CALL, 87, ( {
+                                    double adr = 0;
+
+                                    adr = (double) index;
+
+                                    stackPush(&(s -> returns), (double)adr);
+
+                                    memcpy(&index, code + index + 1, sizeof(int));
+
+                                    break;
+                                }))
+    CMD(RET, 88, ({
+
+                                    index = (int) (stackPop(&(s -> returns)));
+                                    index += 1 + sizeof(int);
+
+                                    break;
+
+                                }
+                                    ))
+    CMD(CUR, 89, ({
+                                     index++;
+                                     double a = stackPop(&(s -> stack));
+                                    printf("current number == %lg\n", a);
+                                    stackPush(&(s -> stack), a);
+                                    break;
+                                    }))
+    CMD_RAM(M_PUSH, place, 90,({
+                                    index++;
+                                    int ip = *((int*)(code + index));
+                                    index += sizeof(int);
+                                    stackPush(&(s -> stack), s ->RAM[ip]);
+                                    break;
+                                    }))
+    CMD_RAM(M_POP, place, 91, ({
+                                    index++;
+                                    int ip = *((int*)(code + index));
+                                    index += sizeof(int);
+                                    s -> RAM[ip] = stackPop(&(s -> stack));
+                                    break;
+                                    }))
+    CMD(RET, 88, ({
+
+
+                                }))

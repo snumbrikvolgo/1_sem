@@ -1,0 +1,22 @@
+funcion sex [a, b]
+<" lee(a);
+    lee(b);
+">
+funcion lol[a, b]
+<" lee(a);
+    lee(b);
+">
+funcion main [a, b, c]
+<"
+    lee(a);
+    lee(b);
+    lee(c);
+    a = c;
+    llama sex[a, b];
+    escribe(a);
+    escribe(c);
+    mientras (a > 3)
+    <"
+    escribe(b);
+    ">
+">
