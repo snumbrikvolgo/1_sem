@@ -1,0 +1,168 @@
+digraph Tree
+{
+rankdir=TB
+		node [ shape = "box", color = "black" ]
+		edge [ color = "black" ]
+
+	size [ label ="size = 32" ]
+
+subgraph clust_1{
+randir = HR;
+	elem_1 [ shape = "record", label = "{ <pointer> 1\n0x55dd2d2be7b0|  { value = 8\n  | <parent> parent\n(nil) } | { <left> left\n0x55dd2d2be5c0 | <right> right\n0x55dd2d2be780 } }"]}
+
+subgraph clust_2{
+randir = HR;
+	elem_2 [ shape = "record", label = "{ <pointer> 2\n0x55dd2d2be5c0|  { value = 8\n  | <parent> parent\n0x55dd2d2be7b0 } | { <left> left\n0x55dd2d2bdeb0 | <right> right\n0x55dd2d2be590 } }"]}
+
+		elem_1:<left> -> elem_2
+subgraph clust_3{
+randir = HR;
+	elem_3 [ shape = "record", label = "{ <pointer> 3\n0x55dd2d2bdeb0|  { value = 8\n  | <parent> parent\n0x55dd2d2be5c0 } | { <left> left\n0x55dd2d2bde80 | <right> right\n0x55dd2d2bde50 } }"]}
+
+		elem_2:<left> -> elem_3
+subgraph clust_4{
+randir = HR;
+	elem_4 [ shape = "record", label = "{ <pointer> 4\n0x55dd2d2bde80|  { value = 0\n  | <parent> parent\n0x55dd2d2bdeb0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_3:<left> -> elem_4
+subgraph clust_5{
+randir = HR;
+	elem_5 [ shape = "record", label = "{ <pointer> 5\n0x55dd2d2bde50|  { value = 19\n  | <parent> parent\n0x55dd2d2bdeb0 } | { <left> left\n0x55dd2d2bde20 | <right> right\n(nil) } }"]}
+
+		elem_3:<right> -> elem_5
+subgraph clust_6{
+randir = HR;
+	elem_6 [ shape = "record", label = "{ <pointer> 6\n0x55dd2d2bde20|  { value = 0\n  | <parent> parent\n0x55dd2d2bde50 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_5:<left> -> elem_6
+subgraph clust_7{
+randir = HR;
+	elem_7 [ shape = "record", label = "{ <pointer> 7\n0x55dd2d2be590|  { value = 8\n  | <parent> parent\n0x55dd2d2be5c0 } | { <left> left\n0x55dd2d2be560 | <right> right\n0x55dd2d2be530 } }"]}
+
+		elem_2:<right> -> elem_7
+subgraph clust_8{
+randir = HR;
+	elem_8 [ shape = "record", label = "{ <pointer> 8\n0x55dd2d2be560|  { value = -4\n  | <parent> parent\n0x55dd2d2be590 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_7:<left> -> elem_8
+subgraph clust_9{
+randir = HR;
+	elem_9 [ shape = "record", label = "{ <pointer> 9\n0x55dd2d2be530|  { value = 8\n  | <parent> parent\n0x55dd2d2be590 } | { <left> left\n0x55dd2d2be230 | <right> right\n0x55dd2d2be500 } }"]}
+
+		elem_7:<right> -> elem_9
+subgraph clust_10{
+randir = HR;
+	elem_10 [ shape = "record", label = "{ <pointer> 10\n0x55dd2d2be230|  { value = 8\n  | <parent> parent\n0x55dd2d2be530 } | { <left> left\n0x55dd2d2be160 | <right> right\n0x55dd2d2be200 } }"]}
+
+		elem_9:<left> -> elem_10
+subgraph clust_11{
+randir = HR;
+	elem_11 [ shape = "record", label = "{ <pointer> 11\n0x55dd2d2be160|  { value = 8\n  | <parent> parent\n0x55dd2d2be230 } | { <left> left\n0x55dd2d2be090 | <right> right\n0x55dd2d2be130 } }"]}
+
+		elem_10:<left> -> elem_11
+subgraph clust_12{
+randir = HR;
+	elem_12 [ shape = "record", label = "{ <pointer> 12\n0x55dd2d2be090|  { value = 19\n  | <parent> parent\n0x55dd2d2be160 } | { <left> left\n0x55dd2d2be060 | <right> right\n(nil) } }"]}
+
+		elem_11:<left> -> elem_12
+subgraph clust_13{
+randir = HR;
+	elem_13 [ shape = "record", label = "{ <pointer> 13\n0x55dd2d2be060|  { value = 0\n  | <parent> parent\n0x55dd2d2be090 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_12:<left> -> elem_13
+subgraph clust_14{
+randir = HR;
+	elem_14 [ shape = "record", label = "{ <pointer> 14\n0x55dd2d2be130|  { value = 19\n  | <parent> parent\n0x55dd2d2be160 } | { <left> left\n0x55dd2d2be100 | <right> right\n(nil) } }"]}
+
+		elem_11:<right> -> elem_14
+subgraph clust_15{
+randir = HR;
+	elem_15 [ shape = "record", label = "{ <pointer> 15\n0x55dd2d2be100|  { value = 1\n  | <parent> parent\n0x55dd2d2be130 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_14:<left> -> elem_15
+subgraph clust_16{
+randir = HR;
+	elem_16 [ shape = "record", label = "{ <pointer> 16\n0x55dd2d2be200|  { value = 19\n  | <parent> parent\n0x55dd2d2be230 } | { <left> left\n0x55dd2d2be1d0 | <right> right\n(nil) } }"]}
+
+		elem_10:<right> -> elem_16
+subgraph clust_17{
+randir = HR;
+	elem_17 [ shape = "record", label = "{ <pointer> 17\n0x55dd2d2be1d0|  { value = 2\n  | <parent> parent\n0x55dd2d2be200 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_16:<left> -> elem_17
+subgraph clust_18{
+randir = HR;
+	elem_18 [ shape = "record", label = "{ <pointer> 18\n0x55dd2d2be500|  { value = 17\n  | <parent> parent\n0x55dd2d2be530 } | { <left> left\n0x55dd2d2be400 | <right> right\n0x55dd2d2be4d0 } }"]}
+
+		elem_9:<right> -> elem_18
+subgraph clust_19{
+randir = HR;
+	elem_19 [ shape = "record", label = "{ <pointer> 19\n0x55dd2d2be400|  { value = 16\n  | <parent> parent\n0x55dd2d2be500 } | { <left> left\n0x55dd2d2be300 | <right> right\n0x55dd2d2be3d0 } }"]}
+
+		elem_18:<left> -> elem_19
+subgraph clust_20{
+randir = HR;
+	elem_20 [ shape = "record", label = "{ <pointer> 20\n0x55dd2d2be300|  { value = 11\n  | <parent> parent\n0x55dd2d2be400 } | { <left> left\n0x55dd2d2be2a0 | <right> right\n0x55dd2d2be2d0 } }"]}
+
+		elem_19:<left> -> elem_20
+subgraph clust_21{
+randir = HR;
+	elem_21 [ shape = "record", label = "{ <pointer> 21\n0x55dd2d2be2a0|  { value = 0\n  | <parent> parent\n0x55dd2d2be300 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_20:<left> -> elem_21
+subgraph clust_22{
+randir = HR;
+	elem_22 [ shape = "record", label = "{ <pointer> 22\n0x55dd2d2be2d0|  { value = 0\n  | <parent> parent\n0x55dd2d2be300 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_20:<right> -> elem_22
+subgraph clust_23{
+randir = HR;
+	elem_23 [ shape = "record", label = "{ <pointer> 23\n0x55dd2d2be3d0|  { value = 15\n  | <parent> parent\n0x55dd2d2be400 } | { <left> left\n0x55dd2d2be3a0 | <right> right\n0x55dd2d2be370 } }"]}
+
+		elem_19:<right> -> elem_23
+subgraph clust_24{
+randir = HR;
+	elem_24 [ shape = "record", label = "{ <pointer> 24\n0x55dd2d2be3a0|  { value = 1\n  | <parent> parent\n0x55dd2d2be3d0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_23:<left> -> elem_24
+subgraph clust_25{
+randir = HR;
+	elem_25 [ shape = "record", label = "{ <pointer> 25\n0x55dd2d2be370|  { value = 0\n  | <parent> parent\n0x55dd2d2be3d0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_23:<right> -> elem_25
+subgraph clust_26{
+randir = HR;
+	elem_26 [ shape = "record", label = "{ <pointer> 26\n0x55dd2d2be4d0|  { value = 15\n  | <parent> parent\n0x55dd2d2be500 } | { <left> left\n0x55dd2d2be4a0 | <right> right\n0x55dd2d2be470 } }"]}
+
+		elem_18:<right> -> elem_26
+subgraph clust_27{
+randir = HR;
+	elem_27 [ shape = "record", label = "{ <pointer> 27\n0x55dd2d2be4a0|  { value = 2\n  | <parent> parent\n0x55dd2d2be4d0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_26:<left> -> elem_27
+subgraph clust_28{
+randir = HR;
+	elem_28 [ shape = "record", label = "{ <pointer> 28\n0x55dd2d2be470|  { value = 0\n  | <parent> parent\n0x55dd2d2be4d0 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_26:<right> -> elem_28
+subgraph clust_29{
+randir = HR;
+	elem_29 [ shape = "record", label = "{ <pointer> 29\n0x55dd2d2be780|  { value = 8\n  | <parent> parent\n0x55dd2d2be7b0 } | { <left> left\n0x55dd2d2be750 | <right> right\n0x55dd2d2be720 } }"]}
+
+		elem_1:<right> -> elem_29
+subgraph clust_30{
+randir = HR;
+	elem_30 [ shape = "record", label = "{ <pointer> 30\n0x55dd2d2be750|  { value = 2\n  | <parent> parent\n0x55dd2d2be780 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_29:<left> -> elem_30
+subgraph clust_31{
+randir = HR;
+	elem_31 [ shape = "record", label = "{ <pointer> 31\n0x55dd2d2be720|  { value = 19\n  | <parent> parent\n0x55dd2d2be780 } | { <left> left\n0x55dd2d2be6f0 | <right> right\n(nil) } }"]}
+
+		elem_29:<right> -> elem_31
+subgraph clust_32{
+randir = HR;
+	elem_32 [ shape = "record", label = "{ <pointer> 32\n0x55dd2d2be6f0|  { value = 0\n  | <parent> parent\n0x55dd2d2be720 } | { <left> left\n(nil) | <right> right\n(nil) } }"]}
+
+		elem_31:<left> -> elem_32
+}
