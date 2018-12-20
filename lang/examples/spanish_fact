@@ -1,0 +1,20 @@
+funcion factorial [x, y]
+<"
+    si (x < 1)
+    <"
+        escribe (y);
+    ">
+    otro
+    <"
+        y = y * x;
+        x = x - 1;
+        llama factorial [x, y];
+    ">
+">
+
+funcion main[x, y]
+<"
+    y = 1;
+    lee (x);
+    llama factorial [x, y];
+">

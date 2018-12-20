@@ -1,0 +1,58 @@
+funcion linear[a, b]
+<"
+    si (a == 0)
+        <"
+             a = (0-1) * b /a;
+            escribe (a);
+            
+        ">
+    otro
+        <"
+          si (b == 0)
+            <"
+               a = 1488;
+                escribe(a);
+            ">
+            otro
+             <"
+                
+                a = 1 / 0;
+                escribe(a);
+              "> 
+        ">
+
+">
+funcion square[a, b, c, d]
+<"
+      d = (b*b)-4(a*c);
+      si (d >= 0)
+        <"
+            a = 1488;
+            escribe(a);
+        ">
+    otro
+        <"
+            c = ((0-1)*b+sqrt(d))/2/a;
+            escribe(c);
+            c = ((0-1)*b-sqrt(d))/2/a;
+            escribe(c);
+        ">
+    
+">
+
+funcion main[a,b,c, d]
+<"
+    lee(a);
+    lee(b);
+    lee(c);
+    si (a == 0)
+    <"
+        llama square[a, b, c, d];
+    ">
+    otro
+    <"
+        llama linear[b, c];
+    ">
+">
+
+
