@@ -57,13 +57,11 @@ int main()
     label_t labels = {0};
     int quantity = 0;
 
-    printf("buffer %s", buffer);
-    while(quantity < 2)
+      while(quantity < 2)
     {
 
         while(*(buffer + ptr) != '\0')
         {
-            printf("%c\n",*(buffer + ptr));
             if (*(buffer + ptr) == ':')
             {
 
@@ -165,7 +163,7 @@ int main()
                     for (cycle = 0; cycle < labels.size; cycle++)                                                               \
                         {                                                                                                       \
                             if (strncmp(labels.names[cycle].label_name, nombre, numeros) == 0)                                  \
-                                {   printf(" cur adr =    %d\n", labels.names[cycle].label_address);                            \
+                                {                                                                                               \
                                     memcpy(code + index, &labels.names[cycle].label_address, sizeof(int));                      \
                                     flg = 1;                                                                                    \
                                     index += sizeof(int);                                                                       \
