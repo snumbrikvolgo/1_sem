@@ -1,20 +1,20 @@
-    CMD(BEGIN, 64, ({                                                           
+CMD(BEGIN, 64, ({
                                     index++;
-                                    break; 
-                                }))    
+                                    break;
+                                }))
     CMD(POP, 65, ({
                                 index++;
                                 break;
-                              }))    
+                              }))
     CMD_COMPLEX(PUSH, 66, ({
                                         index++;
                                         memcpy(&value, (code + index), sizeof(double));
                                         stackPush(&(s -> stack), value);
                                         index += sizeof(double);
-                                        
+
                                         break;
-                                        
-                                       }))    
+
+                                       }))
     CMD(MUL, 67, ({
                                     index++;
                                     stackPush(&(s -> stack), stackPop(&(s -> stack)) * stackPop(&(s -> stack)));
@@ -25,7 +25,7 @@
                                     index++;
                                     double  a = stackPop(&(s -> stack));
                                     double  b = stackPop(&(s -> stack));
-                        
+
                                     stackPush(&(s -> stack), b/a);
                                     break;
                                }))
@@ -39,18 +39,18 @@
                                     index++;
                                     double  a = stackPop(&(s -> stack));
                                     double  b = stackPop(&(s -> stack));
-                        
+
                                     stackPush(&(s -> stack), b - a);
                                     break;
                                }))
-    CMD(END, 71, ({                                                   
-                                   
+    CMD(END, 71, ({
+
                                     exit(0);
-                                    break; 
+                                    break;
                                 }))
 
     CMD_REG(R_PUSH, REG_NAME, 72, ({
-                                   
+
                                    index++;
                                    switch(code[index])
                                     {
@@ -62,10 +62,10 @@
                                          }
                                     case '2':
                                         {
-                                          
+
                                             stackPush(&(s -> stack), (s -> regs.rbx));
                                             index++;
-                                            
+
                                             break;
                                          }
                                     case '3':
@@ -73,7 +73,7 @@
 
                                             stackPush(&(s -> stack), (s -> regs.rcx));
                                             index++;
-                                         
+
                                             break;
                                          }
                                    case '4':
@@ -81,7 +81,7 @@
 
                                             stackPush(&(s -> stack), (s -> regs.rdx));
                                             index++;
-                                          
+
                                             break;
                                          }
                                     }
@@ -89,7 +89,7 @@
                                 }))
     CMD_REG(R_POP, REG_NAME, 73, ({
                                    index++;
-                                   
+
                                    switch(code[index])
                                    {
                                    case '1':
@@ -127,11 +127,11 @@
                                                 break;
                                             }
                                     }
-                                    
+
                                 break;
                                 }))
-   
-  
+
+
     CMD(SQRT, 74, ({
                                     index++;
                                     double  a = stackPop(&(s -> stack));
@@ -164,16 +164,15 @@
                                }))
     CMD(OUT, 78, ({
                                    index++;
-                                   printf("out == %lg \n", stackPop(&(s -> stack)));
+                                   printf("%lg \n", stackPop(&(s -> stack)));
                                    break;
                                 }))
-    CMD(IN, 79, ( {   
+    CMD(IN, 79, ( {
                                             index++;
-                                            printf("Enter the number\n");
                                             double value = 0;
                                             scanf("%lg", &value);
                                             stackPush(&(s -> stack), value);
-    
+
                                             break;
                                         }))
     CMD_JMP(JAE, 84, ({
@@ -185,7 +184,7 @@
                                        memcpy(&index, code + index, sizeof(int));
                                     }
                                     else index += sizeof(int);
-                                    
+
                                     break;
                                }))
     CMD_JMP(JBE, 85, ( {
@@ -197,7 +196,7 @@
                                         memcpy(&index, code + index, sizeof(int));
                                     }
                                     else index += sizeof(int);
-                                    
+
                                     break;
                                }))
     CMD_JMP(JNE, 86, (  {
@@ -209,65 +208,63 @@
                                         memcpy(&index, code + index, sizeof(int));
                                     }
                                     else index += sizeof(int);
-                                    
+
                                     break;
                                }))
     CMD_JMP(JMP, 80, ({
                                     index++;
                                     memcpy(&index, code + index, sizeof(int));
-                             
+
                                     break;
                                }))
     CMD_JMP(JA, 81, ({
                                     index++;
                                     double a = stackPop(&(s -> stack));
-                                    
+
                                     double b = stackPop(&(s -> stack));
-                                    printf(" a = %lf b = %lg\n", a, b);
                                     if (a > b)
                                     {
                                         memcpy(&index, code + index, sizeof(int));
-                                  
-                                    }
-                                    
-                                    else index += sizeof(int);
-                                   
 
-                                    
+                                    }
+
+                                    else index += sizeof(int);
+
+
+
                                     break;
                                }))
     CMD_JMP(JB, 82, ( {
                                     index++;
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
-                                    printf(" a = %lf b = %lg\n", a, b);
 
                                     if (a < b)
                                     {
                                         memcpy(&index, code + index, sizeof(int));
-                                       
+
                                     }
-                                   
+
                                     else index += sizeof(int);
-                                    
-                                    
+
+
                                     break;
                                }))
-    CMD_JMP(JE, 83, ({   
+    CMD_JMP(JE, 83, ({
                                     index++;
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
                                     if (a == b)
-                                    {   
-                                        
+                                    {
+
                                         memcpy(&index, code + index, sizeof(int));
-                                        
+
                                     }
                                     else index += sizeof(int);
-                                    
+
                                     break;
                                }))
-    CMD_JMP(CALL, 87, ( {   
+    CMD_JMP(CALL, 87, ( {
                                     double adr = 0;
 
                                     adr = (double) index;
@@ -282,7 +279,7 @@
 
                                     index = (int) (stackPop(&(s -> returns)));
                                     index += 1 + sizeof(int);
-                                   
+
                                     break;
 
                                 }
@@ -290,7 +287,6 @@
     CMD(CUR, 89, ({
                                      index++;
                                        double a = stackPop(&(s -> stack));
-                                printf("current number == %lg\n", a);
                                 stackPush(&(s -> stack), a);
                                 break;
                                 }))
@@ -308,4 +304,3 @@
                                     s -> RAM[index] = stackPop(&(s -> stack));
                                     break;
                                     }))
-
