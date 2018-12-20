@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
-#include "stack-s-typedef-canary-izvrashenie.c"
+#include "stack.c"
 #include "work_file_strings.h"
 #define RAM_SIZE 1024
 #include <errno.h>
@@ -12,11 +12,11 @@
 
 enum asm_commands
 {
-#define CMD         (name, num, act)                 CMD_##name         = num,
-#define CMD_COMPLEX (name, num, act)                 CMD_COMPLEX_##name = num,
-#define CMD_REG     (name, reg_name, num, act)       CMD_REG_##name     = num,
-#define CMD_JMP     (name, num, act)                 CMD_JMP_##name     = num,
-#define CMD_RAM     (name, place, num, act)          CMD_JMP_##name     = num,
+#define CMD(name, num, act) CMD_##name = num,
+#define CMD_COMPLEX(name, num, act) CMD_COMPLEX_##name = num,
+#define CMD_REG(name, reg_name, num, act) CMD_REG_##name = num,
+#define CMD_JMP(name, num, act) CMD_JMP_##name = num,
+#define CMD_RAM(name, place, num, act) CMD_JMP_##name = num,
 
 #include "commands.h"
 
@@ -82,6 +82,7 @@ int Compiler(char* code, const int size, CPU_t* s)
               #undef CMD_RAM
                      default: {
                             perror("Unknown command\n");
+                            printf("%c%c%C\n", code[index], code[index + 1], code[index + 2]);
                             exit(0);
                             break;
                               }

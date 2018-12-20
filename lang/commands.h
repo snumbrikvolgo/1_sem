@@ -1,4 +1,4 @@
-    CMD(BEGIN, 64, ({
+CMD(BEGIN, 64, ({
                                     index++;
                                     break;
                                 }))
@@ -164,13 +164,11 @@
                                }))
     CMD(OUT, 78, ({
                                    index++;
-                                   double popret = stackPop(&(s -> stack));
-                                   printf("out == %lg \n", popret);
+                                   printf("%lg \n", stackPop(&(s -> stack)));
                                    break;
                                 }))
     CMD(IN, 79, ( {
                                             index++;
-                                            printf("Enter the number\n");
                                             double value = 0;
                                             scanf("%lg", &value);
                                             stackPush(&(s -> stack), value);
@@ -224,7 +222,6 @@
                                     double a = stackPop(&(s -> stack));
 
                                     double b = stackPop(&(s -> stack));
-                                    printf(" a = %lf b = %lg\n", a, b);
                                     if (a > b)
                                     {
                                         memcpy(&index, code + index, sizeof(int));
@@ -241,7 +238,6 @@
                                     index++;
                                     double a = stackPop(&(s -> stack));
                                     double b = stackPop(&(s -> stack));
-                                    printf(" a = %lf b = %lg\n", a, b);
 
                                     if (a < b)
                                     {
@@ -290,26 +286,21 @@
                                     ))
     CMD(CUR, 89, ({
                                      index++;
-                                     double a = stackPop(&(s -> stack));
-                                    printf("current number == %lg\n", a);
-                                    stackPush(&(s -> stack), a);
-                                    break;
-                                    }))
+                                       double a = stackPop(&(s -> stack));
+                                stackPush(&(s -> stack), a);
+                                break;
+                                }))
     CMD_RAM(M_PUSH, place, 90,({
                                     index++;
-                                    int ip = *((int*)(code + index));
-                                    index += sizeof(int);
+                                    int ip = 0;
+                                    memcpy(code + index, &ip, sizeof(int));
                                     stackPush(&(s -> stack), s ->RAM[ip]);
                                     break;
                                     }))
     CMD_RAM(M_POP, place, 91, ({
                                     index++;
-                                    int ip = *((int*)(code + index));
-                                    index += sizeof(int);
-                                    s -> RAM[ip] = stackPop(&(s -> stack));
+                                    int ip = 0;
+                                    memcpy(code + index, &ip, sizeof(int));
+                                    s -> RAM[index] = stackPop(&(s -> stack));
                                     break;
                                     }))
-    CMD(RET, 88, ({
-
-
-                                }))

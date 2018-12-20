@@ -45,7 +45,8 @@ typedef struct labels
 int main()
 {
     FILE * file = fopen("debug.txt", "wb");
-    FILE * input = fopen("tree.txt", "r");
+    FILE * input = fopen("polsk..txt", "r");
+    const char* name = "polsk..txt";
     char * buffer =  read_file(input);
     int file_size = size_of_file(input);
 
@@ -56,12 +57,13 @@ int main()
     label_t labels = {0};
     int quantity = 0;
 
-
+    printf("buffer %s", buffer);
     while(quantity < 2)
     {
 
         while(*(buffer + ptr) != '\0')
         {
+            printf("%c\n",*(buffer + ptr));
             if (*(buffer + ptr) == ':')
             {
 

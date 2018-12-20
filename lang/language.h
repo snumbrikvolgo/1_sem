@@ -60,19 +60,16 @@ enum lang_errors
   node_t* value2 = getE(vars);                                  \
                                                                 \
   skipSpaces();                                                 \
-  printf("cluasecom %c\n", *s);                                                         \
-                                                          \
   assert(s != ptr);                                             \
   return command(value, value2);                                \
 }
 
 #define CONDICIONAL(name)                                       \
   skipSpaces();                                                 \
-          printf("cluase %c\n", *s);                                                         \
-  if (*(s++) != '(')                                         \
+  if (*(s++) != '(')                                            \
   {                                                             \
     errno = SYNTERROR;                                          \
-    fprintf(stderr, "No braaaacket en " #name);                    \
+    fprintf(stderr, "No braaaacket en " #name);                 \
     exit(0);                                                    \
   }                                                             \
   skipSpaces();                                                 \
@@ -82,18 +79,13 @@ enum lang_errors
   assert(ptr != s);                                             \
                                                                 \
   skipSpaces();                                                 \
-  printf("cluase %c\n", *s);                                                         \
-                                                \
-  assert(*(s++) == ')');                                            \
+  assert(*(s++) == ')');                                        \
                                                                 \
   skipSpaces();                                                 \
                                                                 \
   ptr = s;                                                      \
-  printf("cluase222 %c\n", *s);                                                         \
-\
   node_t* value2 = getOp(vars);                                 \
-  printf("cluase333 %c\n", *s);                                                         \
-                                                            \
+                                                                \
   assert(s != ptr);                                             \
                                                                 \
   skipSpaces();
